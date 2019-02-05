@@ -1,0 +1,43 @@
+
+
+
+
+
+
+
+
+#account {
+	background-color: #f1b58a;
+    position: absolute;
+    top: 78px;
+    width: 91px;
+    height: 63px;
+    right: 0px;
+    padding-bottom: 7px;
+    padding-top: 9px;
+    padding-left: 7px;
+}
+
+#account .title {
+	font-size: 15px;
+    color: #bb8864;
+    right: 101px;
+    top: 1px;
+    position: absolute;
+}
+
+#account #view_btn {
+	background-color: #bb8864;
+    width: 60px;
+    color: white;
+    padding-left: 29px;
+    padding-top: 22px;
+    padding-bottom: 22px;
+    position: absolute;
+    right: 0px;
+    cursor:pointer;
+}
+#account #view_btn:hover {
+    background-color: white;
+    color:black;
+}

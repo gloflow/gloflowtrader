@@ -1,0 +1,223 @@
+body {
+	background-color:lightgrey;margin:0px;font-family:sans-serif;
+}
+/*----------------------------------------------------------------*/
+
+.app_title {
+    padding: 6px;
+    font-size: 12px;
+    color: #989898;
+}
+/*----------------------------------------------------------------*/
+#markets {
+    position: absolute;
+    top: 0px;
+    left: 200px;
+}
+#markets .market_title {
+    padding: 6px;
+    font-size: 34px;
+    color: #989898;
+}
+#markets #market__stocks_btn {
+    position: absolute;
+    top: 0px;
+    background-color: gray;
+    color: white;
+    cursor:pointer;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 8px;
+}
+#markets #market__crypto_btn {
+    position: absolute;
+    top: 0px;
+    left: 150px;
+    background-color: gray;
+    color: white;
+    cursor:pointer;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 8px;
+}
+/*----------------------------------------------------------------*/
+.title {
+    padding: 6px;
+    font-size: 34px;
+    color: #989898;
+}
+/*----------------------------------------------------------------*/
+/*STOCKS_WATCHLIST*/
+
+#watchlist {
+	position: absolute;
+    right: 0px;
+    top: 187px;
+    width: 517px;
+	background-color: #eaeaea;
+    padding-bottom: 1px;
+    
+    
+}
+#watchlist .title {
+    font-size: 16px;
+    color: gray;
+}
+
+
+
+.quote {
+	position: relative;
+    background-color: #cecece;
+
+    height: 97px;
+    width: 500px;
+    margin-bottom: 12px;
+}
+.quote .info_display {
+	position: absolute;
+    top: 19px;
+    padding-left: 16px;
+    width: 287px;
+}
+.quote .info_display .name {
+    position: absolute;
+    top: -14px;
+    left: 7px;
+}
+.quote .info_display .change_nominal {
+    position: absolute;
+    top: 5px;
+    left: 77px;
+    font-size: 43px;
+    font-weight: bold;
+
+    background-color: #80ff80;
+    padding-left: 17px;
+    padding-right: 23px;
+    padding-top: 10px;
+    padding-bottom: 9px;
+}
+.quote .info_display .change_percent {
+    position: absolute;
+    top: 56px;
+    left: 193px;
+}
+
+
+.quote .symbol {
+	font-weight: bold;
+    font-size: 25px;
+    position: absolute;
+    top: 15px;
+    left: 8px;
+}
+.quote .last_trade_price {
+    font-size: 23px;
+    font-weight: bold;
+    position: absolute;
+    right: 0px;
+    top: 3px;
+    z-index: 1;
+}
+
+
+
+
+.quote .view_plot_btn {
+	position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: #ffff8d;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 40px;
+    padding-bottom: 39px;
+    cursor:pointer;
+}
+.quote .view_plot_btn:hover {
+	background-color: white;
+}
+
+.quote .plot_close_btn {
+    background-color: #dcdc7a;
+    width: 63px;
+    text-align: center;
+    padding-top: 22px;
+    padding-bottom: 21px;
+    position: absolute;
+    top: 36px;
+    right: 72px;
+    cursor:pointer;
+}
+.quote .plot_close_btn:hover {
+    color:black;
+    background-color: white;
+}
+
+.quote .plots {
+    position: absolute;
+    z-index: 2;
+    top: 600px;
+    right: 0px;
+}
+
+.quote .plot {
+	position: relative;
+    width: 605px;
+    right: 0px;
+    top: 96px;
+    background-color: #ffff8d;
+    z-index: 2;
+}
+
+.quote .svg_plot {
+    position: absolute;
+    width: 800px;
+    right: 0px;
+    top: 96px;
+    background-color: #ffff8d;
+    z-index: 2;
+}
+
+.quote .transactions {
+    position: absolute;
+    right: 73px;
+    width: 116px;
+    height:60px;
+    background-color: white;
+}
+
+.quote .transactions .buy_btn {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: gray;
+    color: white;
+    padding-left: 17px;
+    padding-right: 17px;
+    padding-top: 40px;
+    padding-bottom: 39px;
+    cursor:pointer;
+}
+.quote .transactions .buy_btn:hover {
+    color:black;
+    background-color: white;
+}
+
+.quote .transactions .sell_btn {
+    position: absolute;
+    top: 0px;
+    left: 59px;
+    background-color: #a0a0a0;
+    color: white;
+    padding-left: 17px;
+    padding-right: 17px;
+    padding-top: 40px;
+    padding-bottom: 39px;
+    cursor:pointer;
+}
+.quote .transactions .sell_btn:hover {
+    color:black;
+    background-color: white;
+}

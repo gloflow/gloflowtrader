@@ -1,0 +1,85 @@
+
+
+
+#gemini {
+	position: absolute;
+    top: 95px;
+    left: 0px;
+    background-color: #00fdff;
+    color: black;
+}
+#gemini .title {
+	color: black;
+}
+/*------------------------------------------------------------*/
+/*BID*/
+#gemini .market_data .bid {
+	position: absolute;
+    left: 0px;
+    width: 780px;
+    height: 1000px;
+    background-color: #e6e6e6;
+}
+
+#gemini .market_data .bid .trade__data {
+	position: absolute;
+	width: 390px;
+}
+
+#gemini .market_data .bid .place_and_cancel__data {
+	position: absolute;
+	left: 390px;
+	width: 420px;
+}
+
+#gemini .market_data .bid .title {
+	font-size: 16px;
+	color: black;
+}
+
+#gemini .market_data .bid .price .reason {
+	font-size: 14px;
+}
+/*------------------------------------------------------------*/
+/*ASK*/
+#gemini .market_data .ask {
+	position: absolute;
+	left:780px;
+	width: 500px;
+}
+
+#gemini .market_data .ask .trade__data {
+	position: absolute;
+	width: 390px;
+}
+
+#gemini .market_data .ask .place_and_cancel__data {
+	position: absolute;
+	left: 390px;
+	width: 420px;
+}
+
+#gemini .market_data .ask .title {
+	font-size: 16px;
+	color: black;
+}
+/*------------------------------------------------------------*/
+#gemini .market_data .price .reason {
+	font-size: 14px;
+}
+
+#gemini .market_data .price .reason__cancel {
+	font-size: 14px;
+	background-color: red;
+}
+
+#gemini .market_data .price .reason__place {
+	font-size: 14px;
+	background-color: #5e84da;
+}
+
+
+#gemini .market_data .price .reason__trade {
+	font-size: 14px;
+	background-color: green;
+}

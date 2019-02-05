@@ -1,0 +1,188 @@
+
+
+
+
+#transactions {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    background-color: #9db1c3;
+    height: 66px;
+    width: 177px;
+}
+
+#transactions .title {
+    font-size: 18px;
+    position: absolute;
+    top: -4px;
+    left: -110px;
+    color: #445565;
+}
+
+#transactions #import_btn {
+    position: absolute;
+    top: 0px;
+    right: 8px;
+    background-color: #6a89a5;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    padding-left: 23px;
+    padding-right: 23px;
+    color: white;
+    cursor:pointer;
+}
+#transactions #import_btn:hover {
+    background-color: white;
+    color:black;
+}
+
+
+#transactions #list_btn {
+    position: absolute;
+    top: 0px;
+    right: 104px;
+    background-color: #445565;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    padding-left: 23px;
+    padding-right: 23px;
+    color: white;
+    cursor: pointer;
+}
+#transactions #list_btn:hover {
+    background-color: white;
+    color:black;
+}
+
+#transactions #import_dialog {
+    background-color: #6a89a5;
+    width: 296px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 7px;
+    padding-top: 7px;
+
+    color: white;
+    position: absolute;
+    top: 58px;
+    right: 8px;
+}
+
+#transactions #import_dialog #close_btn {
+    position: absolute;
+    top: 0px;
+    left: -52px;
+    background-color: #6a89a5;
+    padding: 22px;
+    cursor:pointer;
+}
+#transactions #import_dialog #close_btn:hover {
+    background-color: white;
+    color:black;
+}
+
+#transactions #import_dialog #create_btn {
+    background-color: #e66a6a;
+    text-align: center;
+    padding-top: 35px;
+    padding-bottom: 35px;
+    margin-top: 15px;
+    cursor:pointer;
+}
+#transactions #import_dialog #create_btn:hover {
+    background-color: white;
+    color:black;
+}
+/*---------------------------------------------------------------*/
+#buy {
+	background-color: gray;
+    position: absolute;
+    top: 97px;
+    color: black;
+    padding: 6px;
+    width:421px;
+    z-index: 1;
+    font-size: 24px;
+}
+
+#buy #close_btn {
+    position: absolute;
+    top: 0px;
+    right: -65px;
+    background-color: grey;
+    padding: 26px;
+    cursor:pointer;
+}
+#buy #close_btn:hover {
+    background-color: white;
+    color:black;
+}
+
+#buy #buy_quantity {
+	position: relative;
+    background-color: #c19749;
+    padding-top: 21px;
+    padding-left: 8px;
+    padding-bottom: 20px;
+}
+#buy #buy_quantity .label {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+#buy #buy_quantity input#number {
+	position: absolute;
+    top: 0px;
+    left: 175px;
+    font-size: 55px;
+    width: 246px;
+    border-width: 0px;
+}
+
+#buy #available_funds {
+    background-color: #e0b564;
+    padding-left: 5px;
+    padding-top: 4px;
+    padding-bottom: 5px;
+}
+#buy #available_funds .label {
+    font-size:22px;
+}
+
+#buy #buying_capacity {
+    background-color: #debd7f;
+    padding-left: 5px;
+    padding-top: 4px;
+    padding-bottom: 5px;
+}
+
+#buy #debit {
+    background-color: #78945f;
+    padding-left: 5px;
+    padding-top: 4px;
+    padding-bottom: 5px;
+}
+
+
+#buy #debit #total_debit .label {
+    font-weight: bold;
+}
+
+#buy #debit #total_debit .amount {
+	font-weight: bold;
+    font-size: 68px;
+}
+/*---------------------------------------------------------------*/
+/*EXECUTE_BUTTON*/
+#buy #execute_btn {
+	background-color: red;
+    text-align: center;
+    padding-top: 94px;
+    padding-bottom: 94px;
+    color: white;
+    cursor:pointer;
+}
+#buy #execute_btn:hover {
+	background-color: white;
+	color:black;
+}
