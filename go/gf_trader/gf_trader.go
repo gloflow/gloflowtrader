@@ -47,15 +47,15 @@ func main() {
 	
 
 	runtime_sys := &gf_core.Runtime_sys{
-		Service_name_str:"gf_trader",
-		Log_fun:         log_fun,
-		Mongodb_coll:    mongodb_coll,
+		Service_name_str: "gf_trader",
+		Log_fun:          log_fun,
+		Mongodb_coll:     mongodb_coll,
 	}
 	
 	events_ctx := gf_core.Events__init("/trader/events", runtime_sys)
 	runtime    := &Runtime{
-		Events_ctx: events_ctx,
-		Runtime_sys:runtime_sys,
+		Events_ctx:  events_ctx,
+		Runtime_sys: runtime_sys,
 	}
 
 
@@ -86,7 +86,7 @@ func main() {
 	//------------------------
 	//DASHBOARD SERVING
 	static_files__url_base_str := "/trader"
-	gf_core.HTTP__init_static_serving(static_files__url_base_str,runtime_sys)
+	gf_core.HTTP__init_static_serving(static_files__url_base_str, runtime_sys)
 	//------------------------
 	//GEMINI_CRYPTO_EXCHANGE
 
@@ -104,14 +104,14 @@ func main() {
 	http_err := http.ListenAndServe(":"+port_str,nil)
 	if http_err != nil {
 		msg_str := "cant start listening on port - "+port_str
-		log_fun("ERROR",msg_str)
-		log_fun("ERROR",fmt.Sprint(http_err))
+		log_fun("ERROR", msg_str)
+		log_fun("ERROR", fmt.Sprint(http_err))
 		panic(fmt.Sprint(http_err))
 	}
 }
 //-------------------------------------------------
 func market__is_open(p_runtime *Runtime) bool {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_trader.market__is_open()")
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_trader.market__is_open()")
 
 	t := time.Now()
 

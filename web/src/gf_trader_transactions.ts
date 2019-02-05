@@ -21,11 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace gf_trader_transactions {
 
-
 //---------------------------------------------------
-export function view__buy_dialog(p_stock_symbol_str,
-						p_stock_price_f,
-						p_log_fun) {
+export function view__buy_dialog(p_stock_symbol_str, p_stock_price_f, p_log_fun) {
 
 	const b = $(`
 		<div id='buy'>
@@ -54,7 +51,7 @@ export function view__buy_dialog(p_stock_symbol_str,
 			<div id='execute_btn'>execute</div>
 		</div>`);
 
-	$(b).find('#close_btn').on('click',()=>{
+	$(b).find('#close_btn').on('click', ()=>{
 		$(b).remove();
 	})
 
@@ -125,54 +122,36 @@ export function init__import(p_log_fun) {
 
 
 
-		$(import_dialog).find('#close_btn').on('click',()=>{
+		$(import_dialog).find('#close_btn').on('click', ()=>{
 			$(import_dialog).remove();
 		});
 
 
-		$(import_dialog).find('#create_btn').on('click',()=>{
+		$(import_dialog).find('#create_btn').on('click', ()=>{
 
 
 			const transaction_map = {
-
-				'symbol_str'       :$(import_dialog).find('#symbol_input').val(),
-				'date'             :$(import_dialog).find('#date_input').val(),
-				'comission_f'      :$(import_dialog).find('#comission_select option:selected').text(),
-				'shares_num_int'   :$(import_dialog).find('#shares_num').val(),
-				'share_cost_f'     :$(import_dialog).find('#shares_cost').val(),
-				'type_str'         :$(import_dialog).find('#type_select option:selected').text(),
-				'executor_type_str':$(import_dialog).find('#executor_type_select option:selected').text(),
-				'origin_type_str'  :'manual_import'
+				'symbol_str':        $(import_dialog).find('#symbol_input').val(),
+				'date':              $(import_dialog).find('#date_input').val(),
+				'comission_f':       $(import_dialog).find('#comission_select option:selected').text(),
+				'shares_num_int':    $(import_dialog).find('#shares_num').val(),
+				'share_cost_f':      $(import_dialog).find('#shares_cost').val(),
+				'type_str':          $(import_dialog).find('#type_select option:selected').text(),
+				'executor_type_str': $(import_dialog).find('#executor_type_select option:selected').text(),
+				'origin_type_str':   'manual_import'
 			};
-			http__transaction_import(transaction_map,
-								()=>{},
-								()=>{},
-								p_log_fun);
-
-
-
+			http__transaction_import(transaction_map, ()=>{}, ()=>{}, p_log_fun);
 		});
 	});
 }
 //---------------------------------------------------
-export function http__transaction_execute(
-									p_onComplete_fun,
-                                	p_onError_fun,
-                                	p_log_fun) {
-
+export function http__transaction_execute(p_onComplete_fun, p_onError_fun, p_log_fun) {
 
 	const url_str = '/trader/transaction/import';
-    p_log_fun('INFO','url_str - '+url_str);
-
-
-
-    
+    p_log_fun('INFO','url_str - '+url_str);   
 }
 //---------------------------------------------------
-export function http__transaction_import(p_transaction_map :Object,
-                                p_onComplete_fun,
-                                p_onError_fun,
-                                p_log_fun) {
+export function http__transaction_import(p_transaction_map :Object, p_onComplete_fun, p_onError_fun, p_log_fun) {
 
     const url_str = '/trader/transaction/import';
     p_log_fun('INFO','url_str - '+url_str);

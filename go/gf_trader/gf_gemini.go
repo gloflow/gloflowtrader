@@ -35,13 +35,13 @@ func gemini__init(p_runtime *Runtime) {
 }
 //-------------------------------------------------
 func gemini__init_symbol(p_symbol_str string,
-			p_symbol_name_str string,
-			p_runtime         *Runtime) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_gemini.gemini__init()")
+	p_symbol_name_str string,
+	p_runtime         *Runtime) {
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_gemini.gemini__init()")
 
 	//--------------------
 	//url_str := "wss://api.gemini.com/v1/marketdata/BTCUSD"
-	url_str := fmt.Sprintf("wss://api.gemini.com/v1/marketdata/%s",p_symbol_str)
+	url_str := fmt.Sprintf("wss://api.gemini.com/v1/marketdata/%s", p_symbol_str)
 
 	var ws_dialer *websocket.Dialer
 	c, _, err := ws_dialer.Dial(url_str, nil)
@@ -65,13 +65,13 @@ func gemini__init_symbol(p_symbol_str string,
 					price__change_nominal_f := price_f - price__last_f
 					price__change_percent_f := (100*price__change_nominal_f)/price__last_f
 
-					_,err := quote__create(p_symbol_str,
-										p_symbol_name_str,
-										trade_time_f,
-										price_f,
-										price__change_nominal_f,
-										price__change_percent_f,
-										p_runtime)
+					_, err := quote__create(p_symbol_str,
+						p_symbol_name_str,
+						trade_time_f,
+						price_f,
+						price__change_nominal_f,
+						price__change_percent_f,
+						p_runtime)
 					if err != nil {
 						panic("cant create quote")
 					}
@@ -118,9 +118,9 @@ func gemini__init_symbol(p_symbol_str string,
 				event_type_str := "gemini_market_update"
 				event_msg_str  := "ETH market update"
 				event_data_map := map[string]interface{}{
-					"e__symbol_str":p_symbol_str,
-					"e__price_f":   e__price_f,
-					"e__type_str":  e__type_str,
+					"e__symbol_str": p_symbol_str,
+					"e__price_f":    e__price_f,
+					"e__type_str":   e__type_str,
 				}
 
 
@@ -165,11 +165,11 @@ func gemini__init_symbol(p_symbol_str string,
 				//-----------------------
 				//SEND_EVENT
 				gf_core.Events__send_event(events_id_str,
-								event_type_str,       //p_type_str
-								event_msg_str,        //p_msg_str
-								event_data_map,       //p_data_map
-								p_runtime.Events_ctx,
-								p_runtime.Runtime_sys)
+					event_type_str,       //p_type_str
+					event_msg_str,        //p_msg_str
+					event_data_map,       //p_data_map
+					p_runtime.Events_ctx,
+					p_runtime.Runtime_sys)
 				//-----------------------
 			}
 		}

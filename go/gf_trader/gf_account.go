@@ -55,21 +55,21 @@ type Account__balance struct {
 }
 //-------------------------------------------------
 func account__create_defaults(p_runtime *Runtime) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_account.account__create_defaults()")
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__create_defaults()")
 
 	account__create("practice_trading",
-				10000.0, //starting investment
-				10.0,    //comission
-				p_runtime)
+		10000.0, //starting investment
+		10.0,    //comission
+		p_runtime)
 }
 //-------------------------------------------------
 func account__create(p_name_str string,
-				p_starting_investment_f float64,
-				p_comission_per_trade_f float64,
-				p_runtime               *Runtime) error {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_account.account__create()")
+	p_starting_investment_f float64,
+	p_comission_per_trade_f float64,
+	p_runtime               *Runtime) error {
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__create()")
 
-	c,err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"account","name_str":p_name_str}).Count()
+	c, err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"account", "name_str":p_name_str}).Count()
 	if err != nil {
 		return err
 	}
@@ -83,17 +83,17 @@ func account__create(p_name_str string,
 		balance_id_str       := "account_balance__"+fmt.Sprint(creation_unix_time_f)
 
 		balance := &Account__balance{
-			Id_str:                   balance_id_str,
-			T_str:                    "account balance",
-			Account_name_str:         p_name_str,
-			Creation_unix_time_f:     creation_unix_time_f,
-			Stocks_value_f:           0.0,                     //value of stocks currently owned
-			Available_funds_f:        p_starting_investment_f, //money available for investment
-			Total_value_f:            p_starting_investment_f, //available cash plus stocks value
-			Comissions_total_f:       0.0,                     //amount of all comissions paid out
-			Total_transactions_int:   0,
-			Positive_transactions_int:0,
-			Negative_transactions_int:0,
+			Id_str:                    balance_id_str,
+			T_str:                     "account balance",
+			Account_name_str:          p_name_str,
+			Creation_unix_time_f:      creation_unix_time_f,
+			Stocks_value_f:            0.0,                     //value of stocks currently owned
+			Available_funds_f:         p_starting_investment_f, //money available for investment
+			Total_value_f:             p_starting_investment_f, //available cash plus stocks value
+			Comissions_total_f:        0.0,                     //amount of all comissions paid out
+			Total_transactions_int:    0,
+			Positive_transactions_int: 0,
+			Negative_transactions_int: 0,
 		}
 
 		//DB
@@ -108,13 +108,13 @@ func account__create(p_name_str string,
 		id_str              := "account__"+fmt.Sprint(creation_unix_time_f)
 
 		account := &Account{
-			Id_str:                id_str,
-			T_str:                 "account",
-			Creation_unix_time_f:  creation_unix_time_f,
-			Name_str:              p_name_str,
-			Starting_investment_f: p_starting_investment_f,
-			Comission_per_trade_f: p_comission_per_trade_f,
-			Current_balance_id_str:balance.Id_str,
+			Id_str:                 id_str,
+			T_str:                  "account",
+			Creation_unix_time_f:   creation_unix_time_f,
+			Name_str:               p_name_str,
+			Starting_investment_f:  p_starting_investment_f,
+			Comission_per_trade_f:  p_comission_per_trade_f,
+			Current_balance_id_str: balance.Id_str,
 		}
 
 		//DB
@@ -129,34 +129,34 @@ func account__create(p_name_str string,
 }
 //-------------------------------------------------
 func account__get(p_account_name_str string, p_runtime *Runtime) (*Account,error) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_account.account__get()")
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__get()")
 
 
 	var account *Account
 	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-						"t":       "account",
-						"name_str":p_account_name_str,
-					}).One(account)
+			"t":        "account",
+			"name_str": p_account_name_str,
+		}).One(account)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	return account,nil
+	return account, nil
 }
 //-------------------------------------------------
 func account__update(p_transaction *Transaction,
-				p_account *Account,
-				p_runtime *Runtime) error {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_account.account__update()")
+	p_account *Account,
+	p_runtime *Runtime) error {
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__update()")
 
 
 
 
 	var account_balance *Account__balance
 	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-							"t"     :"account_balance",
-							"id_str":p_account.Current_balance_id_str,
-						}).One(account_balance)
+			"t":      "account_balance",
+			"id_str": p_account.Current_balance_id_str,
+		}).One(account_balance)
 	if err != nil {
 		return err
 	}
@@ -182,35 +182,34 @@ func account__update(p_transaction *Transaction,
 	balance_id_str       := "account_balance__"+fmt.Sprint(creation_unix_time_f)
 
 	new_account_balance := &Account__balance{
-		Id_str:                   balance_id_str,
-		T_str:                    "account balance",
-		Account_name_str:         p_account.Name_str,
-		Creation_unix_time_f:     creation_unix_time_f,
-		Stocks_value_f:           total_stock_value_f,   //value of stocks currently owned
-		Available_funds_f:        new_available_funds_f, //money available for investment
-		Total_value_f:            new_total_value_f,     //available cash plus stocks value
-		Comissions_total_f:       0.0,                   //amount of all comissions paid out
-		Total_transactions_int:   new_total_transactions_int,
-		Positive_transactions_int:0,
-		Negative_transactions_int:0,
+		Id_str:                    balance_id_str,
+		T_str:                     "account balance",
+		Account_name_str:          p_account.Name_str,
+		Creation_unix_time_f:      creation_unix_time_f,
+		Stocks_value_f:            total_stock_value_f,   //value of stocks currently owned
+		Available_funds_f:         new_available_funds_f, //money available for investment
+		Total_value_f:             new_total_value_f,     //available cash plus stocks value
+		Comissions_total_f:        0.0,                   //amount of all comissions paid out
+		Total_transactions_int:    new_total_transactions_int,
+		Positive_transactions_int: 0,
+		Negative_transactions_int: 0,
 	}
 	fmt.Println(new_account_balance)
-
 
 	return nil
 }
 //-------------------------------------------------
 func account__get_available_funds(p_account_name_str string, p_runtime *Runtime) (*float64,error) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_account.account__get_available_funds()")
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__get_available_funds()")
 
 	var account Account
 	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-			"t"       :"account",
-			"name_str":p_account_name_str,
+			"t":        "account",
+			"name_str": p_account_name_str,
 		}).One(&account)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	return nil,nil //&account.Available_funds_f,nil
+	return nil, nil //&account.Available_funds_f,nil
 }

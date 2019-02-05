@@ -19,13 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package main
 
-
-
-
-
-
-
-
 //-------------------------------------------------
 //https://us.etrade.com/e/t/estation/help?id=1301000000#Set
 type Stop_order__trailing struct {

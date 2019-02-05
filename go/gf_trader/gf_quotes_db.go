@@ -80,20 +80,18 @@ func (q *Quote__day_historical) SetBSON(p_raw bson.Raw) error {
 	return nil
 }*/
 //-------------------------------------------------
-func quote__get_from_db(p_symbol_str string,
-				p_runtime *Runtime) (*Quote,error) {
+func quote__get_from_db(p_symbol_str string, p_runtime *Runtime) (*Quote,error) {
 
 	var quote *Quote
-	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"quote","symbol_str":p_symbol_str}).One(&quote)
+	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"quote", "symbol_str":p_symbol_str}).One(&quote)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	return quote,nil
+	return quote, nil
 }
 //-------------------------------------------------
-func quote__persist(p_quote *Quote,
-				p_runtime *Runtime) error {
+func quote__persist(p_quote *Quote, p_runtime *Runtime) error {
 
 	err := p_runtime.Runtime_sys.Mongodb_coll.Insert(p_quote)
 	if err != nil {
@@ -103,17 +101,16 @@ func quote__persist(p_quote *Quote,
 	return nil
 }
 //-------------------------------------------------
-func quote__exists_in_db(p_symbol_str string,
-				p_runtime *Runtime) (bool,error) {
+func quote__exists_in_db(p_symbol_str string, p_runtime *Runtime) (bool,error) {
 
-	c,err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"quote","symbol_str":p_symbol_str}).Count()
+	c,err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"quote", "symbol_str":p_symbol_str}).Count()
 	if err != nil {
-		return false,err
+		return false, err
 	}
 
 	if c == 0 {
-		return false,nil
+		return false, nil
 	}
 
-	return true,nil
+	return true, nil
 }

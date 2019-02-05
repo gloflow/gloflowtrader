@@ -33,7 +33,7 @@ func init_handlers(p_runtime *Runtime) error {
 
 	//-------------------
 	//QUOTES
-	http.HandleFunc("/trader/quotes/latest",func(p_resp http.ResponseWriter, p_req *http.Request) {
+	http.HandleFunc("/trader/quotes/latest", func(p_resp http.ResponseWriter, p_req *http.Request) {
 		p_runtime.Runtime_sys.Log_fun("INFO","INCOMING HTTP REQUEST -- /trader/quotes/latest ----------")
 
 		if p_req.Method == "GET" {
@@ -41,7 +41,7 @@ func init_handlers(p_runtime *Runtime) error {
 			qs_map            := p_req.URL.Query()
 			stock_symbols_lst := strings.Split(qs_map["symbols"][0],",")
 
-			quotes_lst,err := quotes__get(stock_symbols_lst, p_runtime)
+			quotes_lst, err := quotes__get(stock_symbols_lst, p_runtime)
 			if err != nil {
 
 			}
@@ -49,27 +49,27 @@ func init_handlers(p_runtime *Runtime) error {
 			//OUTPUT
 			
 			r_map := map[string]interface{}{
-				"status_str":"OK",
-				"quotes_lst":quotes_lst,
+				"status_str": "OK",
+				"quotes_lst": quotes_lst,
 			}
 
 			r_lst,_ := json.Marshal(r_map)
 			r_str   := string(r_lst)
-			fmt.Fprintf(p_resp,r_str)
+			fmt.Fprintf(p_resp, r_str)
 			//------------------
 		}
 	})
 
 
-	http.HandleFunc("/trader/quotes/daily_historic",func(p_resp http.ResponseWriter, p_req *http.Request) {
-		p_runtime.Runtime_sys.Log_fun("INFO","INCOMING HTTP REQUEST -- /trader/quotes/daily_historic ----------")
+	http.HandleFunc("/trader/quotes/daily_historic", func(p_resp http.ResponseWriter, p_req *http.Request) {
+		p_runtime.Runtime_sys.Log_fun("INFO", "INCOMING HTTP REQUEST -- /trader/quotes/daily_historic ----------")
 
 		if p_req.Method == "GET" {
 
 			qs_map           := p_req.URL.Query()
 			stock_symbol_str := qs_map["symbols"][0]
 
-			quotes_lst,err := quotes_historical__get(stock_symbol_str, p_runtime)
+			quotes_lst, err := quotes_historical__get(stock_symbol_str, p_runtime)
 			if err != nil {
 
 			}
@@ -77,13 +77,13 @@ func init_handlers(p_runtime *Runtime) error {
 			//OUTPUT
 			
 			r_map := map[string]interface{}{
-				"status_str":"OK",
-				"quotes_lst":quotes_lst,
+				"status_str": "OK",
+				"quotes_lst": quotes_lst,
 			}
 
 			r_lst,_ := json.Marshal(r_map)
 			r_str   := string(r_lst)
-			fmt.Fprintf(p_resp,r_str)
+			fmt.Fprintf(p_resp, r_str)
 			//------------------
 		}
 	})
@@ -91,8 +91,8 @@ func init_handlers(p_runtime *Runtime) error {
 	//-------------------
 	//TRANSACTIONS
 	
-	http.HandleFunc("/trader/transaction/execute",func(p_resp http.ResponseWriter, p_req *http.Request) {
-		p_runtime.Runtime_sys.Log_fun("INFO","INCOMING HTTP REQUEST -- /trader/transaction/execute ----------")
+	http.HandleFunc("/trader/transaction/execute", func(p_resp http.ResponseWriter, p_req *http.Request) {
+		p_runtime.Runtime_sys.Log_fun("INFO", "INCOMING HTTP REQUEST -- /trader/transaction/execute ----------")
 
 		if p_req.Method == "POST" {
 
@@ -106,7 +106,7 @@ func init_handlers(p_runtime *Runtime) error {
 				gf_err := gf_core.Error__create("failed to parse json http input",
 					"json_unmarshal_error",
 					&map[string]interface{}{},
-					err,"gf_trader",p_runtime.Runtime_sys)
+					err, "gf_trader", p_runtime.Runtime_sys)
 
 				gf_rpc_lib.Error__in_handler("/trader/transaction/execute",
 					"transaction_execute received bad transaction__extern_execute input",
@@ -116,34 +116,34 @@ func init_handlers(p_runtime *Runtime) error {
 			//------------
 
 			account_name_str := "practice_trading"
-			account,err      := account__get(account_name_str, p_runtime)
-			_,err             = transact__execute(&input, account, p_runtime)
+			account, err     := account__get(account_name_str, p_runtime)
+			_, err            = transact__execute(&input, account, p_runtime)
 			if err != nil {
 				return
 			}
 		}
 	})
 
-	http.HandleFunc("/trader/transaction/import",func(p_resp http.ResponseWriter, p_req *http.Request) {
-		p_runtime.Runtime_sys.Log_fun("INFO","INCOMING HTTP REQUEST -- /trader/transaction/import ----------")
+	http.HandleFunc("/trader/transaction/import", func(p_resp http.ResponseWriter, p_req *http.Request) {
+		p_runtime.Runtime_sys.Log_fun("INFO", "INCOMING HTTP REQUEST -- /trader/transaction/import ----------")
 
 		if p_req.Method == "POST" {
 
 			//------------
 			//INPUT
 			var input Transaction__extern__import_input
-			body_bytes_lst,_ := ioutil.ReadAll(p_req.Body)
-		    err              := json.Unmarshal(body_bytes_lst,&input)
+			body_bytes_lst, _ := ioutil.ReadAll(p_req.Body)
+		    err               := json.Unmarshal(body_bytes_lst, &input)
 
 			if err != nil {
 				gf_err := gf_core.Error__create("failed to parse json http input",
 					"json_unmarshal_error",
 					&map[string]interface{}{},
-					err,"gf_trader",p_runtime.Runtime_sys)
+					err, "gf_trader", p_runtime.Runtime_sys)
 
 				gf_rpc_lib.Error__in_handler("/trader/transaction/import",
-									"transaction_import received bad transaction__extern_input input",
-									gf_err, p_resp, p_runtime.Runtime_sys)
+					"transaction_import received bad transaction__extern_input input",
+					gf_err, p_resp, p_runtime.Runtime_sys)
 				return
 			}
 			//------------

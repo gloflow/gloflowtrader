@@ -24,31 +24,26 @@ declare var c3;
 
 //---------------------------------------------------
 export function init_updates(p_log_fun) {
-    p_log_fun('FUN_ENTER','gf_trader_quotes.init_updates()');
+    p_log_fun('FUN_ENTER', 'gf_trader_quotes.init_updates()');
 
     const events_id_str = "trader_events";
     const event_source  = new EventSource("/trader/events?events_id="+events_id_str)
 
     console.log("REGISTER EVENT_SOURCE");
 
-
     var i=0;
     event_source.onmessage = (p_e)=>{
-
         console.log('>>>>> MESSAGE');
         const event_data_map = JSON.parse(p_e.data);
-            
+        
         console.log(event_data_map)
         
-        view__update(event_data_map,
-                                p_log_fun);
+        view__update(event_data_map, p_log_fun);
 
         i+=1;
     }
 
     event_source.onerror = (p_e)=>{
-
-
         console.log('EventSource >> ERROR - '+event_source.readyState);
         console.log(EventSource.CLOSED)
         console.log(p_e);
@@ -59,14 +54,12 @@ export function init_updates(p_log_fun) {
         }
     }
 
-
     event_source.onopen = (p_e)=>{
         console.log('EventSource >> OPEN CONN');
     }
 }
 //---------------------------------------------------
-export function view__update(p_quote_update_map,
-						p_log_fun) {
+export function view__update(p_quote_update_map, p_log_fun) {
 
 
 
@@ -74,8 +67,7 @@ export function view__update(p_quote_update_map,
 	
 }
 //---------------------------------------------------
-export function view_quote(p_q_map,
-					p_log_fun) {
+export function view_quote(p_q_map, p_log_fun) {
 
 	const symbol_str             = p_q_map['symbol_str'];
 	const name_str               = p_q_map['name_str'];
@@ -114,13 +106,11 @@ export function view_quote(p_q_map,
     }
 
     $(q).find('.buy_btn').on('click',()=>{
-    	const b = gf_trader_transactions.view__buy_dialog(symbol_str,
-    												last_trade_price_f,
-    												p_log_fun);
+    	const b = gf_trader_transactions.view__buy_dialog(symbol_str, last_trade_price_f, p_log_fun);
     	$(q).find('.transactions').append(b);
     });
 
-    $(q).find('.view_plot_btn').on('click',(p_e)=>{
+    $(q).find('.view_plot_btn').on('click', (p_e)=>{
 
     	//------------------------
     	//CLOSE_BTN
@@ -170,41 +160,39 @@ export function view_quote(p_q_map,
 		//-------------------------*/
 
 	    gf_trader.http__get_symbols_daily_historic([symbol_str],
-	                (p_quotes_lst)=>{
+			(p_quotes_lst)=>{
 
-	                	console.log('aaaaaaaaaaaaaaaaa')
-	                	console.log(p_quotes_lst)
+				console.log('aaaaaaaaaaaaaaaaa')
+				console.log(p_quotes_lst)
 
-	                	const plot_id_str = symbol_str+'_plot';
-	                	const plot        = $(`
-	                            <div id='`+plot_id_str+`' class='svg_plot'>
-	                                <svg width='800' height='600'></svg>
-	                            </div>`);
+				const plot_id_str = symbol_str+'_plot';
+				const plot        = $(`
+					<div id='`+plot_id_str+`' class='svg_plot'>
+						<svg width='800' height='600'></svg>
+					</div>`);
 
-	                	$(q).append(plot);
+				$(q).append(plot);
 
-	                    const data_lst = [];
-	                    for (var q_map of p_quotes_lst) {
-	                        data_lst.push(q_map['close_price_f']);
-	                    }
+				const data_lst = [];
+				for (var q_map of p_quotes_lst) {
+					data_lst.push(q_map['close_price_f']);
+				}
 
-	                    data_lst.unshift(symbol_str+' close prices');
+				data_lst.unshift(symbol_str+' close prices');
 
-	                    const chart = c3.generate({
-	                        bindto:'#'+plot_id_str,
-	                        data  :{
-								columns: [
-									data_lst,
-									//['data1', 30, 200, 100, 400, 150, 250],
-									//['data2', 50, 20, 10, 40, 15, 25]
-								]
-	                        }
-	                    });
-
-	                    
-	                },
-	                ()=>{},
-	                p_log_fun);
+				const chart = c3.generate({
+					bindto: '#'+plot_id_str,
+					data: {
+						columns: [
+							data_lst,
+							//['data1', 30, 200, 100, 400, 150, 250],
+							//['data2', 50, 20, 10, 40, 15, 25]
+						]
+					}
+				});				
+			},
+			()=>{},
+			p_log_fun);
 	});
 
     return q;

@@ -74,7 +74,7 @@ type Transaction__extern__execute_input struct {
 func transact__execute(p_extern_transaction *Transaction__extern__execute_input,
 	p_account *Account,
 	p_runtime *Runtime) (*Transaction,error) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_transactions.transact__execute()")
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_transactions.transact__execute()")
 
 
 
@@ -82,57 +82,53 @@ func transact__execute(p_extern_transaction *Transaction__extern__execute_input,
 	id_str               := "transaction__"+fmt.Sprint(creation_unix_time_f)
 
 	transaction := &Transaction{
-		Id_str:              id_str,
-		T_str:               "transaction",
-		Creation_unix_time_f:creation_unix_time_f,
-		Symbol_str:          p_extern_transaction.Symbol_str,
-		Date_f:              creation_unix_time_f,
-		Comission_f:         10.0, //p_extern_transaction.Comission_f,
-		Shares_num_int:      p_extern_transaction.Shares_num_int,
-		Share_cost_f:        p_extern_transaction.Share_cost_f,
-		Type_str:            p_extern_transaction.Type_str,
-		Executor_type_str:   "etrade",       //p_extern_transaction.Executor_type_str,
-		Origin_type_str:     "gf_trader_ui", //p_extern_transaction.Origin_type_str,
+		Id_str:               id_str,
+		T_str:                "transaction",
+		Creation_unix_time_f: creation_unix_time_f,
+		Symbol_str:           p_extern_transaction.Symbol_str,
+		Date_f:               creation_unix_time_f,
+		Comission_f:          10.0, //p_extern_transaction.Comission_f,
+		Shares_num_int:       p_extern_transaction.Shares_num_int,
+		Share_cost_f:         p_extern_transaction.Share_cost_f,
+		Type_str:             p_extern_transaction.Type_str,
+		Executor_type_str:    "etrade",       //p_extern_transaction.Executor_type_str,
+		Origin_type_str:      "gf_trader_ui", //p_extern_transaction.Origin_type_str,
 	}
 
 	err := transact__persist(transaction, p_runtime)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	err = account__update(transaction, p_account, p_runtime)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	return transaction,nil
+	return transaction, nil
 }
 //-------------------------------------------------
-func transact__import(p_extern_transaction *Transaction__extern__import_input, p_runtime *Runtime) (*Transaction,error) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_transactions.transact__import()")
-
-
+func transact__import(p_extern_transaction *Transaction__extern__import_input, p_runtime *Runtime) (*Transaction, error) {
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_transactions.transact__import()")
 
 	creation_unix_time_f := float64(time.Now().UnixNano())/1000000000.0
 	id_str               := "transaction__"+fmt.Sprint(creation_unix_time_f)
 
 	transaction := &Transaction{
-		Id_str:              id_str,
-		T_str:               "transaction",
-		Creation_unix_time_f:creation_unix_time_f,
-		Symbol_str:          p_extern_transaction.Symbol_str,
-		Date_f:              float64(p_extern_transaction.Date.Unix()),
-		Comission_f:         p_extern_transaction.Comission_f,
-		Shares_num_int:      p_extern_transaction.Shares_num_int,
-		Share_cost_f:        p_extern_transaction.Share_cost_f,
-		Type_str:            p_extern_transaction.Type_str,
-		Executor_type_str:   p_extern_transaction.Executor_type_str,
-		Origin_type_str:     p_extern_transaction.Origin_type_str,
+		Id_str:               id_str,
+		T_str:                "transaction",
+		Creation_unix_time_f: creation_unix_time_f,
+		Symbol_str:           p_extern_transaction.Symbol_str,
+		Date_f:               float64(p_extern_transaction.Date.Unix()),
+		Comission_f:          p_extern_transaction.Comission_f,
+		Shares_num_int:       p_extern_transaction.Shares_num_int,
+		Share_cost_f:         p_extern_transaction.Share_cost_f,
+		Type_str:             p_extern_transaction.Type_str,
+		Executor_type_str:    p_extern_transaction.Executor_type_str,
+		Origin_type_str:      p_extern_transaction.Origin_type_str,
 	}
 
-
-
-	return transaction,nil
+	return transaction, nil
 }
 //-------------------------------------------------
 func transact__persist(p_transaction *Transaction, p_runtime *Runtime) error {

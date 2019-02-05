@@ -73,7 +73,7 @@ func test() {
 	}
 
 	url_str := "http://www.nasdaq.com/symbol/yhoo/real-time"
-	req, err := http.NewRequest("GET",url_str, nil)
+	req, err := http.NewRequest("GET", url_str, nil)
 	if err != nil {
 		//p_log_fun("ERROR",fmt.Sprint(err))
 		return //nil,err
@@ -89,7 +89,7 @@ func test() {
 	}
 
 	//doc,err := goquery.NewDocument(p_url_str)od kad sam ustao 
-	doc,err := goquery.NewDocumentFromResponse(resp)
+	doc, err := goquery.NewDocumentFromResponse(resp)
 	if err != nil {
 		return //nil,err
 	}
@@ -116,14 +116,14 @@ func repeated__get_quotes(p_runtime *Runtime) {
 			symbols_lst := get_symbols()
 			_,err       := quotes__get(symbols_lst, p_runtime)
 			if err != nil {
-				p_runtime.Runtime_sys.Log_fun("ERROR",fmt.Sprint(err))
+				p_runtime.Runtime_sys.Log_fun("ERROR", fmt.Sprint(err))
 				continue
 			}
 		}
 	}()
 }
 //-------------------------------------------------
-func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Quote,error) {
+func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Quote, error) {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_quotes.quotes__get()")
 
 	cyan   := color.New(color.FgCyan).SprintFunc()
@@ -135,22 +135,22 @@ func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Quote,err
 
     quotes_lst := []*Quote{}
     //for i,q := range q_lst {
-    for _,symbol_str := range p_stock_symbols_lst {
+    for _, symbol_str := range p_stock_symbols_lst {
 
 
-    	p_runtime.Runtime_sys.Log_fun("INFO",yellow("symbol_str - ")+cyan(symbol_str)+" ------------------------------")
+    	p_runtime.Runtime_sys.Log_fun("INFO", yellow("symbol_str - ")+cyan(symbol_str)+" ------------------------------")
     	
 		var quote *Quote
 
 		//no quote was found in the DB.
 		//this is the case if the stock symbol was not queried before
 		//and has never been persisted in the DB
-		if ok,_ := quote__exists_in_db(symbol_str,p_runtime); !ok {
+		if ok, _ := quote__exists_in_db(symbol_str, p_runtime); !ok {
 
-			p_runtime.Runtime_sys.Log_fun("INFO","quote for symbol ("+symbol_str+") not in DB")
-			new_quote,err := stock_quote__create_new(symbol_str, p_runtime)
+			p_runtime.Runtime_sys.Log_fun("INFO", "quote for symbol ("+symbol_str+") not in DB")
+			new_quote, err := stock_quote__create_new(symbol_str, p_runtime)
 			if err != nil {
-				return nil,err
+				return nil, err
 			}
 			quote = new_quote
 			
@@ -163,9 +163,9 @@ func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Quote,err
 			
 			if !market_open_bool {
 				p_runtime.Runtime_sys.Log_fun("INFO","market closed - get from DB")
-				db_quote,err := quote__get_from_db(symbol_str, p_runtime)
+				db_quote, err := quote__get_from_db(symbol_str, p_runtime)
 				if err != nil {
-					return nil,err
+					return nil, err
 				}
 				quote = db_quote
 
@@ -178,9 +178,9 @@ func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Quote,err
 				//              since the last time a new update of the quote was stored 
 				//              in the DB
 				current_time_f := float64(time.Now().UnixNano())/1000000000.0
-				ok,err         := quote__is_too_old(symbol_str, current_time_f, p_runtime)
+				ok, err        := quote__is_too_old(symbol_str, current_time_f, p_runtime)
 				if err != nil {
-					return nil,err
+					return nil, err
 				}
 
 				//--------------------
@@ -190,9 +190,9 @@ func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Quote,err
 				//              streamed from the server will be persisted, and this function will only get the latest
 				//              record from the DB.
 				if ok {
-					new_quote,err := stock_quote__create_new(symbol_str, p_runtime)
+					new_quote, err := stock_quote__create_new(symbol_str, p_runtime)
 					if err != nil {
-						return nil,err
+						return nil, err
 					}
 					quote = new_quote
 				}
@@ -202,10 +202,10 @@ func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Quote,err
 		}
 
 		p_runtime.Runtime_sys.Log_fun("INFO","last trade price - "+cyan(quote.Price_f))
-	    quotes_lst = append(quotes_lst,quote)
+	    quotes_lst = append(quotes_lst, quote)
 	}
 
-    return quotes_lst,nil
+    return quotes_lst, nil
 }
 //-------------------------------------------------
 func quote__is_too_old(p_symbol_str string,
@@ -220,21 +220,21 @@ func quote__is_too_old(p_symbol_str string,
 		return false,err
 	}*/
 
-	quote,err := quote__get_from_db(p_symbol_str, p_runtime)
+	quote, err := quote__get_from_db(p_symbol_str, p_runtime)
 	if err != nil {
-		return false,err
+		return false, err
 	}
 
 	delta_f      := p_compare_to_time_f - quote.Creation_unix_time_f
 	delta_mins_f := delta_f*60
 
 	if delta_mins_f > 5 {
-		return true,nil
+		return true, nil
 	} else {
-		return false,nil
+		return false, nil
 	}
 
-	return false,nil
+	return false, nil
 }
 //-------------------------------------------------
 func stock_quote__create_new(p_symbol_str string,
@@ -248,21 +248,21 @@ func stock_quote__create_new(p_symbol_str string,
     }
 
     //q                         := q_lst[0]
-    quote_name_str            := q.Name
-    trade_time_f              := float64(q.LastTradeTime.Unix())
-	price__f,_                := q.LastTradePrice.Float64()
-	price__change_nominal_f,_ := q.ChangeNominal.Float64()
-	price__change_percent_f,_ := q.ChangePercent.Float64()
+    quote_name_str             := q.Name
+    trade_time_f               := float64(q.LastTradeTime.Unix())
+	price__f, _                := q.LastTradePrice.Float64()
+	price__change_nominal_f, _ := q.ChangeNominal.Float64()
+	price__change_percent_f, _ := q.ChangePercent.Float64()
 
 	quote,err := quote__create(p_symbol_str,
-						quote_name_str,
-						trade_time_f,
-						price__f,
-						price__change_nominal_f,
-						price__change_percent_f,
-						p_runtime)
+		quote_name_str,
+		trade_time_f,
+		price__f,
+		price__change_nominal_f,
+		price__change_percent_f,
+		p_runtime)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 
@@ -272,14 +272,14 @@ func stock_quote__create_new(p_symbol_str string,
 		event_type_str := "quote_update"
 		event_msg_str  := "quote update for - "+p_symbol_str
 		event_data_map := map[string]interface{}{
-			"quote":quote,
+			"quote": quote,
 		}
 		gf_core.Events__send_event(events_id_str,
-							event_type_str,       //p_type_str
-							event_msg_str,        //p_msg_str
-							event_data_map,       //p_data_map
-							p_runtime.Events_ctx,
-							p_runtime.Runtime_sys)
+			event_type_str,       //p_type_str
+			event_msg_str,        //p_msg_str
+			event_data_map,       //p_data_map
+			p_runtime.Events_ctx,
+			p_runtime.Runtime_sys)
 	}
 	//--------------
 
@@ -287,38 +287,38 @@ func stock_quote__create_new(p_symbol_str string,
 }
 //-------------------------------------------------
 func quote__create(p_symbol_str string,
-			p_quote_name_str         string,
-			p_trade_time_f           float64,
-			p_price_f                float64,
-			p_price_change_nominal_f float64,
-			p_price_change_percent_f float64,
-			p_runtime                *Runtime) (*Quote,error) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_quotes.quote__create()")
+	p_quote_name_str         string,
+	p_trade_time_f           float64,
+	p_price_f                float64,
+	p_price_change_nominal_f float64,
+	p_price_change_percent_f float64,
+	p_runtime                *Runtime) (*Quote, error) {
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_quotes.quote__create()")
 
 	creation_unix_time_f := float64(time.Now().UnixNano())/1000000000.0
 	id_str               := "quote__"+fmt.Sprint(creation_unix_time_f)
 
 	quote := &Quote{
-		Id_str:                id_str,
-		T_str:                 "quote",
-		Creation_unix_time_f:  creation_unix_time_f,
-		Symbol_str:            p_symbol_str,
-		Name_str:              p_quote_name_str,
-		Trade_time_f:          p_trade_time_f,
-		Price_f:               p_price_f, 
-		Price_change_nominal_f:p_price_change_nominal_f,
-		Price_change_percent_f:p_price_change_percent_f,
+		Id_str:                 id_str,
+		T_str:                  "quote",
+		Creation_unix_time_f:   creation_unix_time_f,
+		Symbol_str:             p_symbol_str,
+		Name_str:               p_quote_name_str,
+		Trade_time_f:           p_trade_time_f,
+		Price_f:                p_price_f, 
+		Price_change_nominal_f: p_price_change_nominal_f,
+		Price_change_percent_f: p_price_change_percent_f,
 	}
 
-	p_runtime.Runtime_sys.Log_fun("INFO","------- "+p_symbol_str+" - "+fmt.Sprint(quote.Price_f))
+	p_runtime.Runtime_sys.Log_fun("INFO", "------- "+p_symbol_str+" - "+fmt.Sprint(quote.Price_f))
 
 	//--------------
 	//DB PERSIST
 	err := quote__persist(quote, p_runtime)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	//--------------
 	
-	return quote,nil
+	return quote, nil
 }

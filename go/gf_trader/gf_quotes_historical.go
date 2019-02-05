@@ -52,7 +52,7 @@ func (d_lst quotes__day_historical) Less(i, j int) bool {
     return d_lst[i].Date_f > d_lst[j].Date_f
 }
 
-func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__day_historical,error) {
+func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__day_historical, error) {
 
 	//--------------------
 	//HACK!! - for some reason when going 1 month in the past GetQuoteHistory() will returns
@@ -72,15 +72,10 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__
 
     // Request daily history for TWTR.
     // IntervalDaily OR IntervalWeekly OR IntervalMonthly are supported.
-    bars_lst,err := finance.GetQuoteHistory(p_symbol_str,
-    							start,
-    							end,
-    							finance.IntervalDaily)
+    bars_lst,err := finance.GetQuoteHistory(p_symbol_str, start, end, finance.IntervalDaily)
     if err != nil {
-        return nil,err
+        return nil, err
     }
-
-
 
     quotes_lst := []*Quote__day_historical{}
     for _,b := range bars_lst {
@@ -103,27 +98,27 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__
 		close_price_f,_      := b.Close.Float64()
 
     	quote := &Quote__day_historical{
-    		Id_str              :id_str,
-    		T_str               :"quote__day_historical",
-    		Creation_unix_time_f:creation_unix_time_f,
-    		Symbol_str          :p_symbol_str,
-    		Date_f              :date_f,        //b.Date,
-    		Open_price_f        :open_price_f,  //b.Open,
-    		High_price_f        :high_price_f,  //b.High,
-    		Low_price_f         :low_price_f,   //b.Low,
-    		Close_price_f       :close_price_f, //b.Close,
-    		Volume_int          :b.Volume,
+    		Id_str:               id_str,
+    		T_str:                "quote__day_historical",
+    		Creation_unix_time_f: creation_unix_time_f,
+    		Symbol_str:           p_symbol_str,
+    		Date_f:               date_f,        //b.Date,
+    		Open_price_f:         open_price_f,  //b.Open,
+    		High_price_f:         high_price_f,  //b.High,
+    		Low_price_f:          low_price_f,   //b.Low,
+    		Close_price_f:        close_price_f, //b.Close,
+    		Volume_int:           b.Volume,
     	}
 
     	//-------------
     	//DB
     	err := quote_historical__persist(quote, p_runtime)
     	if err != nil {
-    		return nil,err
+    		return nil, err
     	}
     	//-------------
 
-    	quotes_lst = append(quotes_lst,quote)
+    	quotes_lst = append(quotes_lst, quote)
     }
 
     //--------------------------------
@@ -139,11 +134,11 @@ func quote_historical__persist(p_quote *Quote__day_historical, p_runtime *Runtim
 
 	//create new historical record if one for this date doesnt already 
 	//exist in the DB
-	c,err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-					"t":         "quote__day_historical",
-					"symbol_str":p_quote.Symbol_str,
-					"date_f":    p_quote.Date_f,
-				}).Count()
+	c, err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
+			"t":          "quote__day_historical",
+			"symbol_str": p_quote.Symbol_str,
+			"date_f":     p_quote.Date_f,
+		}).Count()
 	if err != nil {
 		return err
 	}
@@ -153,10 +148,7 @@ func quote_historical__persist(p_quote *Quote__day_historical, p_runtime *Runtim
 		if err != nil {
 			return err
 		}
-
 	}
-
-	
 
 	return nil
 }

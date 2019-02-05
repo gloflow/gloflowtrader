@@ -50,10 +50,7 @@ export function init(p_log_fun) {
     //----------------
     //STOCKS_WATCHLIST
     
-    $('#markets #market__stocks_btn').on('click',()=>{
-
-        
-
+    $('#markets #market__stocks_btn').on('click', ()=>{
 
         if (stocks__open_bool == false) {
             
@@ -72,7 +69,7 @@ export function init(p_log_fun) {
     //----------------
     //CRYPTO_CURRENCY
     
-    $('#markets #market__crypto_btn').on('click',()=>{
+    $('#markets #market__crypto_btn').on('click', ()=>{
 
         $(stocks_container).remove();
         if (crypto__open_bool == false) {
@@ -92,10 +89,7 @@ export function init(p_log_fun) {
     gf_trader_transactions.init__import(p_log_fun);
 }
 //---------------------------------------------------
-export function http__get_symbols_daily_historic(p_symbols_lst :string[],
-                                p_onComplete_fun,
-                                p_onError_fun,
-                                p_log_fun) {
+export function http__get_symbols_daily_historic(p_symbols_lst :string[], p_onComplete_fun, p_onError_fun, p_log_fun) {
 
     const url_str = '/trader/quotes/daily_historic?symbols='+p_symbols_lst.join();
     p_log_fun('INFO','url_str - '+url_str);
@@ -121,10 +115,7 @@ export function http__get_symbols_daily_historic(p_symbols_lst :string[],
     //------------------------- 
 }
 //---------------------------------------------------
-export function http__get_symbols_latest(p_symbols_lst :string[],
-                                p_onComplete_fun,
-                                p_onError_fun,
-                                p_log_fun) {
+export function http__get_symbols_latest(p_symbols_lst :string[], p_onComplete_fun, p_onError_fun, p_log_fun) {
 
     const url_str = '/trader/quotes/latest?symbols='+p_symbols_lst.join();
     p_log_fun('INFO','url_str - '+url_str);

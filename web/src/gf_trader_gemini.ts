@@ -25,7 +25,7 @@ declare var EventSource;
 declare var p5;
 //---------------------------------------------------
 export function init(p_log_fun) {
-    p_log_fun('FUN_ENTER','gf_trader_gemini.init()');
+    p_log_fun('FUN_ENTER', 'gf_trader_gemini.init()');
 
     const container = $(`
         <div id='gemini'>
@@ -74,29 +74,25 @@ export function init(p_log_fun) {
 
     const price_data_lst = [];
 
-    init_p5(price_data_lst,
-        p_log_fun);
+    init_p5(price_data_lst, p_log_fun);
 
     
-    init_updates(price_data_lst,
-            container,
-            p_log_fun);
+    init_updates(price_data_lst, container, p_log_fun);
 
     return container;
 }
 //---------------------------------------------------
 function draw_y_axis(p_max_price_f
-                p_min_price_f,
-                p_canvas_height_int,
-                p_p5) {
+    p_min_price_f,
+    p_canvas_height_int,
+    p_p5) {
 
     //------------
     //AXIS
     p_p5.fill(0);
 
     p_p5.stroke(0);
-    p_p5.line(2,0,
-        2,p_canvas_height_int);
+    p_p5.line(2, 0, 2, p_canvas_height_int);
 
     p_p5.rect(2,0,4,4);                     //max_price (p5 coord_sys origin is upper_left)
     p_p5.rect(2,p_canvas_height_int-4,4,4); //min_price
@@ -115,14 +111,10 @@ function draw_y_axis(p_max_price_f
 }
 //---------------------------------------------------
 function draw_grid(p_max_price_f,
-            p_min_price_f,
-            p_canvas_height_int,
-            p_canvas_width_int,
-            p_p5) {
-
-
-
-
+    p_min_price_f,
+    p_canvas_height_int,
+    p_canvas_width_int,
+    p_p5) {
 
     p_p5.stroke(120);
 
@@ -130,7 +122,6 @@ function draw_grid(p_max_price_f,
 
     var i=0;
     while (true) {
-
 
         if (p_min_price_f+i > p_max_price_f) {
             break;
@@ -140,21 +131,14 @@ function draw_grid(p_max_price_f,
         const y_f        = (p_canvas_height_int * price_delta_f) / price_range_f;
         const y_inverted = p_canvas_height_int - y_f; //IMPORTANT!! - invert because p5 coord system is upper-left corner
 
-
-
-
-        p_p5.line(0,y_inverted,
-            p_canvas_width_int,y_inverted);
-
+        p_p5.line(0, y_inverted, p_canvas_width_int, y_inverted);
 
         i++;
-
     }
 }
 //---------------------------------------------------
-function init_p5(p_price_data_lst,
-            p_log_fun) {
-    p_log_fun('FUN_ENTER','gf_trader_gemini.init_p5()');
+function init_p5(p_price_data_lst, p_log_fun) {
+    p_log_fun('FUN_ENTER', 'gf_trader_gemini.init_p5()');
         
     const canvas_width_int  = 1500;
     const canvas_height_int = 400;
@@ -171,21 +155,16 @@ function init_p5(p_price_data_lst,
             p5.background(100);
             p5.fill(255);
 
-            
-
             //IMPORTANT!! - plot is adjusted to only display the max/min price range. 
             //              so that the min_price_f is at Y=0, and max_price_f is at Y=canvas_height_int
             const max_price_f   = Math.max.apply(null,p_price_data_lst);
             const min_price_f   = Math.min.apply(null,p_price_data_lst);
             const price_range_f = max_price_f - min_price_f;
 
-
             draw_y_axis(max_price_f,
                 min_price_f,
                 canvas_height_int,
                 p5);
-
-
 
             draw_grid(max_price_f,
                 min_price_f,
@@ -193,11 +172,10 @@ function init_p5(p_price_data_lst,
                 canvas_width_int,
                 p5);
 
-
             const prev_x_f        = null;
             const prev_y_inverted = null;
 
-            for (var i=0;i<p_price_data_lst.length;i++) {
+            for (var i=0; i < p_price_data_lst.length; i++) {
 
                 //-------------------
                 const price_f    = p_price_data_lst[i];
@@ -231,8 +209,7 @@ function init_p5(p_price_data_lst,
 
                 p5.stroke(153);
                 if (prev_x_f != null) {
-                    p5.line(prev_x_f,prev_y_inverted,
-                        x_f,y_inverted);
+                    p5.line(prev_x_f, prev_y_inverted, x_f, y_inverted);
                 }
 
                 prev_x_f        = x_f;
@@ -245,10 +222,8 @@ function init_p5(p_price_data_lst,
     const custom_p5                  = new p5(p5_env,plot_containing_div_id_str);
 }
 //---------------------------------------------------
-export function init_updates(p_price_data_lst,
-                        p_container,
-                        p_log_fun) {
-    p_log_fun('FUN_ENTER','gf_trader_gemini.init_updates()');
+export function init_updates(p_price_data_lst, p_container, p_log_fun) {
+    p_log_fun('FUN_ENTER', 'gf_trader_gemini.init_updates()');
 
     console.log("REGISTER GEMINI EVENT_SOURCE");
     const events_id_str = "trader_gemini_events";
@@ -258,10 +233,10 @@ export function init_updates(p_price_data_lst,
     
     var   i = 0;
     const market_summary_map = {
-        'last_price_f'        :initial_price_f,
-        'last_side_str'       :'bid', //'bid'|'ask'
-        'bid_trades_count_int':0,
-        'ask_trades_count_int':0
+        'last_price_f':         initial_price_f,
+        'last_side_str':        'bid', //'bid'|'ask'
+        'bid_trades_count_int': 0,
+        'ask_trades_count_int': 0
     };
     
     //const seconds_samples_num_int = 60*6; //number of seconds-resolution price datapoints
@@ -292,12 +267,9 @@ export function init_updates(p_price_data_lst,
             return
         }
 
-        view__update(event_data_map,
-                market_summary_map);
+        view__update(event_data_map, market_summary_map);
 
-        update_market_symmary(event_data_map,
-                        market_summary_map,
-                        p_log_fun);
+        update_market_symmary(event_data_map, market_summary_map, p_log_fun);
         i+=1;
     }
 
@@ -308,8 +280,7 @@ export function init_updates(p_price_data_lst,
     const ask__place_and_cancel_element = $(p_container).find('.ask .place_and_cancel__data');
 
     //---------------------------------------------------
-    function view__update(p_event_data_map,
-                    p_market_summary_map) {
+    function view__update(p_event_data_map, p_market_summary_map) {
 
     	const meta_map    = p_event_data_map['meta_map'];
         const symbol_str  = meta_map['e__symbol_str'];
@@ -407,9 +378,7 @@ export function init_updates(p_price_data_lst,
     }
 }
 //---------------------------------------------------
-function update_market_symmary(p_event_data_map,
-                        p_market_summary_map,
-                        p_log_fun) {
+function update_market_symmary(p_event_data_map, p_market_summary_map, p_log_fun) {
 
     const meta_map    = p_event_data_map['meta_map'];
     const symbol_str  = meta_map['e__symbol_str'];

@@ -19,15 +19,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package main
 
-
-
-
-
 type Position struct {
-	Creation_unix_time_f float64
-	Symbol_str           string 
-	Open_bool            bool
-
+	Creation_unix_time_f     float64
+	Symbol_str               string 
+	Open_bool                bool
 	Buy_transaction_ids_lst  []string
 	Sell_transaction_ids_lst []string
 	Gain_loss_cost_f         float64
