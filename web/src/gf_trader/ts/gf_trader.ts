@@ -19,11 +19,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ///<reference path="./../../d/jquery.d.ts" />
 
-import "./gf_trader_watchlist";
-import "./gf_trader_gemini";
+import * as gf_trader_watchlist    from "./gf_trader_watchlist";
+import * as gf_trader_gemini       from "./gf_trader_gemini";
+import * as gf_trader_transactions from "./gf_trader_transactions";
 
-namespace gf_trader {
-
+//---------------------------------------------------
 $(document).ready(()=>{
     //-------------------------------------------------
     function log_fun(p_g,p_m) {
@@ -40,7 +40,7 @@ $(document).ready(()=>{
         }
     }
     //-------------------------------------------------
-    gf_trader.init(log_fun);
+    init(log_fun);
 });
 //---------------------------------------------------
 export function init(p_log_fun) {
@@ -142,6 +142,4 @@ export function http__get_symbols_latest(p_symbols_lst :string[], p_onComplete_f
             }
         });
     //------------------------- 
-}
-//---------------------------------------------------
 }

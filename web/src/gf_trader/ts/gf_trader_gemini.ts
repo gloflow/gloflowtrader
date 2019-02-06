@@ -19,8 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ///<reference path="./../../d/jquery.d.ts" />
 
-namespace gf_trader_gemini {
-
 declare var EventSource;
 declare var p5;
 //---------------------------------------------------
@@ -406,6 +404,4 @@ function update_market_symmary(p_event_data_map, p_market_summary_map, p_log_fun
 
         p_market_summary_map['last_price_f'] = price_f;
     }
-}
-//---------------------------------------------------
 }

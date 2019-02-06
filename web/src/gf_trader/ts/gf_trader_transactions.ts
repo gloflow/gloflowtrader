@@ -19,8 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ///<reference path="./../../d/jquery.d.ts" />
 
-namespace gf_trader_transactions {
-
 //---------------------------------------------------
 export function view__buy_dialog(p_stock_symbol_str, p_stock_price_f, p_log_fun) {
 
@@ -173,6 +171,4 @@ export function http__transaction_import(p_transaction_map :Object, p_on_complet
             }
         });
     //------------------------- 
-}
-//---------------------------------------------------
 }

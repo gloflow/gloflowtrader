@@ -19,10 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ///<reference path="./../../d/jquery.d.ts" />
 
-import "./gf_trader";
-import "./gf_trader_quotes";
-
-namespace gf_trader_watchlist {
+import * as gf_trader        from "./gf_trader";
+import * as gf_trader_quotes from "./gf_trader_quotes";
 
 //---------------------------------------------------
 export function view(p_log_fun) {
@@ -88,6 +86,4 @@ export function view(p_log_fun) {
 		p_log_fun);
 
 	return container;
-}
-//---------------------------------------------------
 }

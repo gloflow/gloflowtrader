@@ -17,10 +17,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-import "./gf_trader";
-import "./gf_trader_transactions";
-
-namespace gf_trader_quotes {
+import * as gf_trader              from "./gf_trader";
+import * as gf_trader_transactions from "./gf_trader_transactions";
 
 declare var EventSource;
 declare var c3;
@@ -200,6 +198,4 @@ export function view_quote(p_q_map, p_log_fun) {
 	});
 
     return q;
-}
-//---------------------------------------------------
 }
