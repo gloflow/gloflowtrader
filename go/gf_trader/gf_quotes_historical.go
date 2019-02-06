@@ -25,12 +25,13 @@ import (
 	"sort"
 	"github.com/globalsign/mgo/bson"
 	"github.com/FlashBoys/go-finance"
+	"github.com/gloflow/gloflow/go/gf_core"
 )
 //-------------------------------------------------
-type Quote__day_historical struct {
+type Gf_quote__day_historical struct {
 	Id                   bson.ObjectId `bson:"_id,omitempty"`
 	Id_str               string        `bson:"id_str"               json:"-"`              
-	T_str                string        `bson:"t"                    json:"-"` //"quote"
+	T_str                string        `bson:"t"                    json:"-"` //"gf_quote__day_historical"
 	Creation_unix_time_f float64       `bson:"creation_unix_time_f" json:"creation_unix_time_f"`
 	Symbol_str           string        `bson:"symbol_str"           json:"symbol_str"`
 	Date_f               float64       `bson:"date_f"               json:"date_f"` //date for which the quote is actually for (day)
@@ -41,7 +42,7 @@ type Quote__day_historical struct {
 	Volume_int           int           `bson:"volume_int"           json:"volume_int"`
 }
 //-------------------------------------------------
-type quotes__day_historical []*Quote__day_historical
+type quotes__day_historical []*Gf_quote__day_historical
 func (d_lst quotes__day_historical) Len() int {
     return len(d_lst)
 }
@@ -52,7 +53,7 @@ func (d_lst quotes__day_historical) Less(i, j int) bool {
     return d_lst[i].Date_f > d_lst[j].Date_f
 }
 
-func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__day_historical, error) {
+func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Gf_quote__day_historical, *gf_core.Gf_error) {
 
 	//--------------------
 	//HACK!! - for some reason when going 1 month in the past GetQuoteHistory() will returns
@@ -72,13 +73,13 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__
 
     // Request daily history for TWTR.
     // IntervalDaily OR IntervalWeekly OR IntervalMonthly are supported.
-    bars_lst,err := finance.GetQuoteHistory(p_symbol_str, start, end, finance.IntervalDaily)
+    bars_lst, err := finance.GetQuoteHistory(p_symbol_str, start, end, finance.IntervalDaily)
     if err != nil {
         return nil, err
     }
 
-    quotes_lst := []*Quote__day_historical{}
-    for _,b := range bars_lst {
+    gf_quotes_lst := []*Gf_quote__day_historical{}
+    for _, b := range bars_lst {
 
     	fmt.Println("---")
     	fmt.Println("b.Date   - "+fmt.Sprint(b.Date))
@@ -90,16 +91,16 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__
 
 
     	creation_unix_time_f := float64(time.Now().UnixNano())/1000000000.0
-		id_str               := "quote_day_historical__"+fmt.Sprint(creation_unix_time_f)
+		id_str               := "gf_quote_day_historical__"+fmt.Sprint(creation_unix_time_f)
 		date_f               := float64(b.Date.Unix())
 		open_price_f,_       := b.Open.Float64()
 		high_price_f,_       := b.High.Float64()
 		low_price_f,_        := b.Low.Float64()
 		close_price_f,_      := b.Close.Float64()
 
-    	quote := &Quote__day_historical{
+    	gf_quote := &Gf_quote__day_historical{
     		Id_str:               id_str,
-    		T_str:                "quote__day_historical",
+    		T_str:                "gf_quote__day_historical",
     		Creation_unix_time_f: creation_unix_time_f,
     		Symbol_str:           p_symbol_str,
     		Date_f:               date_f,        //b.Date,
@@ -112,39 +113,43 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Quote__
 
     	//-------------
     	//DB
-    	err := quote_historical__persist(quote, p_runtime)
-    	if err != nil {
-    		return nil, err
+    	gf_err := quote_historical__persist(gf_quote, p_runtime)
+    	if gf_err != nil {
+    		return nil, gf_err
     	}
     	//-------------
 
-    	quotes_lst = append(quotes_lst, quote)
+    	gf_quotes_lst = append(gf_quotes_lst, gf_quote)
     }
 
     //--------------------------------
     //GetQuoteHistory() - returns quotes where the latest is first in the list. 
     //                    this has to be reversed, where the oldest quote is first in the list
-    sort.Sort(sort.Reverse(quotes__day_historical(quotes_lst)))
+    sort.Sort(sort.Reverse(quotes__day_historical(gf_quotes_lst)))
     //--------------------------------
 
-    return quotes_lst,nil
+    return gf_quotes_lst, nil
 }
 //-------------------------------------------------
-func quote_historical__persist(p_quote *Quote__day_historical, p_runtime *Runtime) error {
+func quote_historical__persist(p_gf_quote *Gf_quote__day_historical, p_runtime *Runtime) *gf_core.Gf_error {
 
 	//create new historical record if one for this date doesnt already 
 	//exist in the DB
 	c, err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-			"t":          "quote__day_historical",
-			"symbol_str": p_quote.Symbol_str,
-			"date_f":     p_quote.Date_f,
+			"t":          "gf_quote__day_historical",
+			"symbol_str": p_gf_quote.Symbol_str,
+			"date_f":     p_gf_quote.Date_f,
 		}).Count()
 	if err != nil {
-		return err
+		gf_err := gf_core.Error__create("failed to get a gf_quote__day_historical in the DB",
+			"mongodb_find_error",
+			&map[string]interface{}{"symbol_str": p_gf_quote.Symbol_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return gf_err
 	}
 	
 	if c == 0 {
-		err := p_runtime.Runtime_sys.Mongodb_coll.Insert(p_quote)
+		err := p_runtime.Runtime_sys.Mongodb_coll.Insert(p_gf_quote)
 		if err != nil {
 			return err
 		}

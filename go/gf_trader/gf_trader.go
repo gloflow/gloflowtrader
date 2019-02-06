@@ -44,8 +44,6 @@ func main() {
 	mongodb_coll        := mongodb_db.C("data")
 	//-----------------
 
-	
-
 	runtime_sys := &gf_core.Runtime_sys{
 		Service_name_str: "gf_trader",
 		Log_fun:          log_fun,
@@ -57,10 +55,7 @@ func main() {
 		Events_ctx:  events_ctx,
 		Runtime_sys: runtime_sys,
 	}
-
-
 	
-
 	//STATIC CONFIG 
 	//symbols_lst := get_symbols()
 
@@ -94,7 +89,6 @@ func main() {
 	//------------------------
 
 	test()
-
 
 	log_fun("INFO",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 	log_fun("INFO","STARTING HTTP SERVER - PORT - "+port_str)

@@ -34,15 +34,15 @@ func init_handlers(p_runtime *Runtime) error {
 	//-------------------
 	//QUOTES
 	http.HandleFunc("/trader/quotes/latest", func(p_resp http.ResponseWriter, p_req *http.Request) {
-		p_runtime.Runtime_sys.Log_fun("INFO","INCOMING HTTP REQUEST -- /trader/quotes/latest ----------")
+		p_runtime.Runtime_sys.Log_fun("INFO", "INCOMING HTTP REQUEST -- /trader/quotes/latest ----------")
 
 		if p_req.Method == "GET" {
 
 			qs_map            := p_req.URL.Query()
 			stock_symbols_lst := strings.Split(qs_map["symbols"][0],",")
 
-			quotes_lst, err := quotes__get(stock_symbols_lst, p_runtime)
-			if err != nil {
+			quotes_lst, gf_err := quotes__get(stock_symbols_lst, p_runtime)
+			if gf_err != nil {
 
 			}
 			//------------------
@@ -60,7 +60,6 @@ func init_handlers(p_runtime *Runtime) error {
 		}
 	})
 
-
 	http.HandleFunc("/trader/quotes/daily_historic", func(p_resp http.ResponseWriter, p_req *http.Request) {
 		p_runtime.Runtime_sys.Log_fun("INFO", "INCOMING HTTP REQUEST -- /trader/quotes/daily_historic ----------")
 
@@ -69,8 +68,8 @@ func init_handlers(p_runtime *Runtime) error {
 			qs_map           := p_req.URL.Query()
 			stock_symbol_str := qs_map["symbols"][0]
 
-			quotes_lst, err := quotes_historical__get(stock_symbol_str, p_runtime)
-			if err != nil {
+			quotes_lst, gf_err := quotes_historical__get(stock_symbol_str, p_runtime)
+			if gf_err != nil {
 
 			}
 			//------------------
@@ -148,8 +147,8 @@ func init_handlers(p_runtime *Runtime) error {
 			}
 			//------------
 
-			_,err = transact__import(&input, p_runtime)
-			if err != nil {
+			_, gf_err = transact__import(&input, p_runtime)
+			if gf_err != nil {
 				return
 			}
 		}

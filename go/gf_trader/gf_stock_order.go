@@ -21,6 +21,6 @@ package main
 
 //-------------------------------------------------
 //https://us.etrade.com/e/t/estation/help?id=1301000000#Set
-type Stop_order__trailing struct {
+type Gf_stop_order__trailing struct {
 
 }

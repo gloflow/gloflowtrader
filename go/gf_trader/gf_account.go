@@ -23,9 +23,10 @@ import (
 	"time"
 	"fmt"
 	"github.com/globalsign/mgo/bson"
+	"github.com/gloflow/gloflow/go/gf_core"
 )
 //-------------------------------------------------
-type Account struct {
+type Gf_account struct {
 	Id                     bson.ObjectId `bson:"_id,omitempty"          json:"-"`
 	Id_str                 string        `bson:"id_str"                 json:"id_str"`
 	T_str                  string        `bson:"t"                      json:"-"` //"account"
@@ -39,7 +40,7 @@ type Account struct {
 //IMPORTANT!! - each account state update is persisted, so that account changes can be easily logged
 //              and processed/monitored. Append-only nature of this data set, also allows for easy reverses
 //              of account state
-type Account__balance struct {
+type Gf_account__balance struct {
 	Id                        bson.ObjectId `bson:"_id,omitempty"             json:"-"`
 	Id_str                    string        `bson:"id_str"                    json:"id_str"`
 	T_str                     string        `bson:"t"                         json:"-"` //"account balance"
@@ -63,15 +64,19 @@ func account__create_defaults(p_runtime *Runtime) {
 		p_runtime)
 }
 //-------------------------------------------------
-func account__create(p_name_str string,
+func account__create(p_account_name_str string,
 	p_starting_investment_f float64,
 	p_comission_per_trade_f float64,
-	p_runtime               *Runtime) error {
+	p_runtime               *Runtime) *gf_core.Gf_error {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__create()")
 
-	c, err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"account", "name_str":p_name_str}).Count()
+	c, err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"gf_account", "name_str":p_account_name_str}).Count()
 	if err != nil {
-		return err
+		gf_err := gf_core.Error__create("failed to create an account in the DB",
+			"mongodb_find_error",
+			&map[string]interface{}{"name_str": p_account_name_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return gf_err
 	}
 
 	//only create an account if one by this name doesnt already exist
@@ -82,10 +87,10 @@ func account__create(p_name_str string,
 		creation_unix_time_f := float64(time.Now().UnixNano())/1000000000.0
 		balance_id_str       := "account_balance__"+fmt.Sprint(creation_unix_time_f)
 
-		balance := &Account__balance{
+		gf_balance := &Gf_account__balance{
 			Id_str:                    balance_id_str,
-			T_str:                     "account balance",
-			Account_name_str:          p_name_str,
+			T_str:                     "gf_account_balance",
+			Account_name_str:          p_account_name_str,
 			Creation_unix_time_f:      creation_unix_time_f,
 			Stocks_value_f:            0.0,                     //value of stocks currently owned
 			Available_funds_f:         p_starting_investment_f, //money available for investment
@@ -97,9 +102,13 @@ func account__create(p_name_str string,
 		}
 
 		//DB
-		err := p_runtime.Runtime_sys.Mongodb_coll.Insert(balance)
+		err := p_runtime.Runtime_sys.Mongodb_coll.Insert(gf_balance)
 		if err != nil {
-			return err
+			gf_err := gf_core.Error__create("failed to insert an account balance for an account into the DB",
+				"mongodb_insert_error",
+				&map[string]interface{}{"account_name_str":p_account_name_str,},
+				err, "gf_trader", p_runtime.Runtime_sys)
+			return gf_err
 		}
 		//---------------
 		//ACCOUNT
@@ -107,20 +116,24 @@ func account__create(p_name_str string,
 		creation_unix_time_f = float64(time.Now().UnixNano())/1000000000.0
 		id_str              := "account__"+fmt.Sprint(creation_unix_time_f)
 
-		account := &Account{
+		gf_account := &Gf_account{
 			Id_str:                 id_str,
-			T_str:                  "account",
+			T_str:                  "gf_account",
 			Creation_unix_time_f:   creation_unix_time_f,
-			Name_str:               p_name_str,
+			Name_str:               p_account_name_str,
 			Starting_investment_f:  p_starting_investment_f,
 			Comission_per_trade_f:  p_comission_per_trade_f,
-			Current_balance_id_str: balance.Id_str,
+			Current_balance_id_str: gf_balance.Id_str,
 		}
 
 		//DB
-		err = p_runtime.Runtime_sys.Mongodb_coll.Insert(account)
+		err = p_runtime.Runtime_sys.Mongodb_coll.Insert(gf_account)
 		if err != nil {
-			return err
+			gf_err := gf_core.Error__create("failed to insert an account into the DB",
+				"mongodb_insert_error",
+				&map[string]interface{}{"account_name_str":p_account_name_str,},
+				err, "gf_trader", p_runtime.Runtime_sys)
+			return gf_err
 		}
 		//---------------
 	}
@@ -128,63 +141,64 @@ func account__create(p_name_str string,
 	return nil
 }
 //-------------------------------------------------
-func account__get(p_account_name_str string, p_runtime *Runtime) (*Account,error) {
+func account__get(p_account_name_str string, p_runtime *Runtime) (*Gf_account, *gf_core.Gf_error) {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__get()")
 
 
-	var account *Account
+	var gf_account *Gf_account
 	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-			"t":        "account",
+			"t":        "gf_account",
 			"name_str": p_account_name_str,
-		}).One(account)
+		}).One(gf_account)
 	if err != nil {
-		return nil, err
+		gf_err := gf_core.Error__create("failed to get an account in the DB",
+			"mongodb_find_error",
+			&map[string]interface{}{"name_str": p_account_name_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return nil, gf_err
 	}
 
-	return account, nil
+	return gf_account, nil
 }
 //-------------------------------------------------
-func account__update(p_transaction *Transaction,
-	p_account *Account,
-	p_runtime *Runtime) error {
+func account__update(p_transaction *Gf_transaction,
+	p_gf_account *Gf_account,
+	p_runtime *Runtime) *gf_core.Gf_error {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__update()")
 
 
-
-
-	var account_balance *Account__balance
+	var gf_account_balance *Gf_account__balance
 	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-			"t":      "account_balance",
-			"id_str": p_account.Current_balance_id_str,
-		}).One(account_balance)
+			"t":      "gf_account_balance",
+			"id_str": p_gf_account.Current_balance_id_str,
+		}).One(gf_account_balance)
 	if err != nil {
-		return err
+		gf_err := gf_core.Error__create("failed to to find gf_account_balance record in DB in order to update the account",
+			"mongodb_find_error",
+			&map[string]interface{}{"account_name_str": p_gf_account.Name_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return gf_err
 	}
 
-	
-
-
 	new_stocks_value_f  := float64(p_transaction.Shares_num_int) * p_transaction.Share_cost_f
-	total_stock_value_f := account_balance.Stocks_value_f + new_stocks_value_f
+	total_stock_value_f := gf_account_balance.Stocks_value_f + new_stocks_value_f
 
-
-
-	new_available_funds_f := account_balance.Available_funds_f - new_stocks_value_f
+	new_available_funds_f := gf_account_balance.Available_funds_f - new_stocks_value_f
 
 
 	//FIX!! - this is a varying figure, and changes with the change in the quote/stock price.
 	//        so that value, when used by other displays/calculations should recalculated each time, 
 	//        since the quotes will change continuously.
-	new_total_value_f          := account_balance.Total_value_f + new_stocks_value_f
-	new_total_transactions_int := account_balance.Total_transactions_int
+	new_total_value_f          := gf_account_balance.Total_value_f + new_stocks_value_f
+	new_total_transactions_int := gf_account_balance.Total_transactions_int
 	
 	creation_unix_time_f := float64(time.Now().UnixNano())/1000000000.0
-	balance_id_str       := "account_balance__"+fmt.Sprint(creation_unix_time_f)
+	balance_id_str       := "gf_account_balance__"+fmt.Sprint(creation_unix_time_f)
 
-	new_account_balance := &Account__balance{
+	new_gf_account_balance := &Gf_account__balance{
 		Id_str:                    balance_id_str,
-		T_str:                     "account balance",
-		Account_name_str:          p_account.Name_str,
+		T_str:                     "gf_account_balance",
+		Account_name_str:          p_gf_account.Name_str,
 		Creation_unix_time_f:      creation_unix_time_f,
 		Stocks_value_f:            total_stock_value_f,   //value of stocks currently owned
 		Available_funds_f:         new_available_funds_f, //money available for investment
@@ -194,22 +208,44 @@ func account__update(p_transaction *Transaction,
 		Positive_transactions_int: 0,
 		Negative_transactions_int: 0,
 	}
-	fmt.Println(new_account_balance)
+	fmt.Println(new_gf_account_balance)
 
 	return nil
 }
 //-------------------------------------------------
-func account__get_available_funds(p_account_name_str string, p_runtime *Runtime) (*float64,error) {
+func account__get_available_funds(p_account_name_str string, p_runtime *Runtime) (float64, *gf_core.Gf_error) {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_account.account__get_available_funds()")
 
-	var account Account
+	//------------------------
+	//ACCOUNT
+	var gf_account Gf_account
 	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
-			"t":        "account",
+			"t":        "gf_account",
 			"name_str": p_account_name_str,
-		}).One(&account)
+		}).One(&gf_account)
+		
 	if err != nil {
-		return nil, err
+		gf_err := gf_core.Error__create("failed to get account aavailable funds from the DB",
+			"mongodb_find_error",
+			&map[string]interface{}{"account_name_str": p_account_name_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return 0.0, gf_err
 	}
+	//-------------------------
+	//ACCOUNT_BALANCE
+	var gf_account_balance *Gf_account__balance
+	err = p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{
+			"t":      "gf_account_balance",
+			"id_str": gf_account.Current_balance_id_str,
+		}).One(gf_account_balance)
+	if err != nil {
+		gf_err := gf_core.Error__create("failed to to find account_balance record in DB in order to update the account",
+			"mongodb_find_error",
+			&map[string]interface{}{"account_name_str": gf_account.Name_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return 0.0, gf_err
+	}
+	//-------------------------
 
-	return nil, nil //&account.Available_funds_f,nil
+	return gf_account_balance.Available_funds_f, nil
 }

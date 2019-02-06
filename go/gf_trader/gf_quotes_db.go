@@ -21,7 +21,53 @@ package main
 
 import (
 	"github.com/globalsign/mgo/bson"
+	"github.com/gloflow/gloflow/go/gf_core"
 )
+//-------------------------------------------------
+func quote__get_from_db(p_symbol_str string, p_runtime *Runtime) (*Gf_quote, *gf_core.Gf_error) {
+
+	var gf_quote *Gf_quote
+	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"gf_quote", "symbol_str":p_symbol_str}).One(&gf_quote)
+	if err != nil {
+		gf_err := gf_core.Error__create("failed to get a quote in the DB",
+			"mongodb_find_error",
+			&map[string]interface{}{"symbol_str": p_symbol_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return nil, gf_err
+	}
+	return gf_quote, nil
+}
+//-------------------------------------------------
+func quote__persist(p_gf_quote *Gf_quote, p_runtime *Runtime) *gf_core.Gf_error {
+
+	err := p_runtime.Runtime_sys.Mongodb_coll.Insert(p_gf_quote)
+	if err != nil {
+		gf_err := gf_core.Error__create("failed to insert an gf_quote into the DB",
+			"mongodb_insert_error",
+			&map[string]interface{}{"quote_symbol_str":p_gf_quote.Symbol_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return gf_err
+	}
+	return nil
+}
+//-------------------------------------------------
+func quote__exists_in_db(p_symbol_str string, p_runtime *Runtime) (bool, *gf_core.Gf_error) {
+
+	c, err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"gf_quote", "symbol_str":p_symbol_str}).Count()
+	if err != nil {
+		gf_err := gf_core.Error__create("failed to get a quote from DB to check if it exists",
+			"mongodb_find_error",
+			&map[string]interface{}{"symbol_str": p_symbol_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return false, gf_err
+	}
+
+	if c == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
 //-------------------------------------------------
 /*func (q Quote) GetBSON() (interface{},error) {
 
@@ -79,38 +125,3 @@ func (q Quote__day_historical) GetBSON() (interface{},error) {
 func (q *Quote__day_historical) SetBSON(p_raw bson.Raw) error {
 	return nil
 }*/
-//-------------------------------------------------
-func quote__get_from_db(p_symbol_str string, p_runtime *Runtime) (*Quote,error) {
-
-	var quote *Quote
-	err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"quote", "symbol_str":p_symbol_str}).One(&quote)
-	if err != nil {
-		return nil, err
-	}
-
-	return quote, nil
-}
-//-------------------------------------------------
-func quote__persist(p_quote *Quote, p_runtime *Runtime) error {
-
-	err := p_runtime.Runtime_sys.Mongodb_coll.Insert(p_quote)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-//-------------------------------------------------
-func quote__exists_in_db(p_symbol_str string, p_runtime *Runtime) (bool,error) {
-
-	c,err := p_runtime.Runtime_sys.Mongodb_coll.Find(bson.M{"t":"quote", "symbol_str":p_symbol_str}).Count()
-	if err != nil {
-		return false, err
-	}
-
-	if c == 0 {
-		return false, nil
-	}
-
-	return true, nil
-}

@@ -30,13 +30,13 @@ import (
 //-------------------------------------------------
 func gemini__init(p_runtime *Runtime) {
 
-	gemini__init_symbol("ETHUSD","etherium_dollar",p_runtime)
-	gemini__init_symbol("BTCUSD","bitcoin_dollar", p_runtime)
+	gemini__init_symbol("ETHUSD", "etherium_dollar", p_runtime)
+	gemini__init_symbol("BTCUSD", "bitcoin_dollar",  p_runtime)
 }
 //-------------------------------------------------
 func gemini__init_symbol(p_symbol_str string,
 	p_symbol_name_str string,
-	p_runtime         *Runtime) {
+	p_runtime         *Runtime) *gf_core.Gf_error {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_gemini.gemini__init()")
 
 	//--------------------
@@ -46,11 +46,10 @@ func gemini__init_symbol(p_symbol_str string,
 	var ws_dialer *websocket.Dialer
 	c, _, err := ws_dialer.Dial(url_str, nil)
 	if err != nil {
-		fmt.Println(fmt.Sprint(err))
+		
+		return err
 	}
 	//--------------------
-
-
 
 	price_updates__ch := make(chan float64,100)
 	go func() {
@@ -65,14 +64,14 @@ func gemini__init_symbol(p_symbol_str string,
 					price__change_nominal_f := price_f - price__last_f
 					price__change_percent_f := (100*price__change_nominal_f)/price__last_f
 
-					_, err := quote__create(p_symbol_str,
+					_, gf_err := quote__create(p_symbol_str,
 						p_symbol_name_str,
 						trade_time_f,
 						price_f,
 						price__change_nominal_f,
 						price__change_percent_f,
 						p_runtime)
-					if err != nil {
+					if gf_err != nil {
 						panic("cant create quote")
 					}
 

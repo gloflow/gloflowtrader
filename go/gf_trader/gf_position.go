@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 package main
 
-type Position struct {
+type Gf_position struct {
 	Creation_unix_time_f     float64
 	Symbol_str               string 
 	Open_bool                bool
