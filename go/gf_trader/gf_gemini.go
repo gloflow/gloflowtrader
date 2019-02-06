@@ -46,8 +46,11 @@ func gemini__init_symbol(p_symbol_str string,
 	var ws_dialer *websocket.Dialer
 	c, _, err := ws_dialer.Dial(url_str, nil)
 	if err != nil {
-		
-		return err
+		gf_err := gf_core.Error__create("failed to connect to Gemini marketdata websocket url",
+			"ws_connection_init_error",
+			&map[string]interface{}{"url_str": url_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return gf_err
 	}
 	//--------------------
 
@@ -173,4 +176,5 @@ func gemini__init_symbol(p_symbol_str string,
 			}
 		}
 	}()
+	return nil
 }

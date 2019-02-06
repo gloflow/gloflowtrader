@@ -97,7 +97,7 @@ func init_handlers(p_runtime *Runtime) error {
 
 			//------------
 			//INPUT
-			var input Transaction__extern__execute_input
+			var input Gf_transaction__extern__execute_input
 			body_bytes_lst,_ := ioutil.ReadAll(p_req.Body)
 		    err              := json.Unmarshal(body_bytes_lst, &input)
 
@@ -114,10 +114,14 @@ func init_handlers(p_runtime *Runtime) error {
 			}
 			//------------
 
-			account_name_str := "practice_trading"
-			account, err     := account__get(account_name_str, p_runtime)
-			_, err            = transact__execute(&input, account, p_runtime)
-			if err != nil {
+			account_name_str   := "practice_trading"
+			gf_account, gf_err := account__get(account_name_str, p_runtime)
+			if gf_err != nil {
+				return
+			}
+
+			_, gf_err = transact__execute(&input, gf_account, p_runtime)
+			if gf_err != nil {
 				return
 			}
 		}
@@ -130,7 +134,7 @@ func init_handlers(p_runtime *Runtime) error {
 
 			//------------
 			//INPUT
-			var input Transaction__extern__import_input
+			var input Gf_transaction__extern__import_input
 			body_bytes_lst, _ := ioutil.ReadAll(p_req.Body)
 		    err               := json.Unmarshal(body_bytes_lst, &input)
 
@@ -147,7 +151,7 @@ func init_handlers(p_runtime *Runtime) error {
 			}
 			//------------
 
-			_, gf_err = transact__import(&input, p_runtime)
+			_, gf_err := transact__import(&input, p_runtime)
 			if gf_err != nil {
 				return
 			}

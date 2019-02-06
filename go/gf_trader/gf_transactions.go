@@ -138,9 +138,9 @@ func transact__persist(p_gf_transaction *Gf_transaction, p_runtime *Runtime) *gf
 		gf_err := gf_core.Error__create("failed to insert a gf_transaction into the DB",
 			"mongodb_insert_error",
 			&map[string]interface{}{
-				"account_name_str":p_gf_transaction.Symbol_str,
-				"shares_num_int":  p_gf_transaction.Shares_num_int,
-				"shares_num_int":  p_gf_transaction.Share_cost_f,
+				"account_name_str": p_gf_transaction.Symbol_str,
+				"shares_num_int":   p_gf_transaction.Shares_num_int,
+				"shares_cost_f":    p_gf_transaction.Share_cost_f,
 			},
 			err, "gf_trader", p_runtime.Runtime_sys)
 		return gf_err

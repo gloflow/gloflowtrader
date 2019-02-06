@@ -140,6 +140,7 @@ func quote_historical__persist(p_gf_quote *Gf_quote__day_historical, p_runtime *
 			"symbol_str": p_gf_quote.Symbol_str,
 			"date_f":     p_gf_quote.Date_f,
 		}).Count()
+
 	if err != nil {
 		gf_err := gf_core.Error__create("failed to get a gf_quote__day_historical in the DB",
 			"mongodb_find_error",
@@ -151,7 +152,11 @@ func quote_historical__persist(p_gf_quote *Gf_quote__day_historical, p_runtime *
 	if c == 0 {
 		err := p_runtime.Runtime_sys.Mongodb_coll.Insert(p_gf_quote)
 		if err != nil {
-			return err
+			gf_err := gf_core.Error__create("failed to insert an gf_quote into the DB",
+				"mongodb_insert_error",
+				&map[string]interface{}{"quote_symbol_str":p_gf_quote.Symbol_str,},
+				err, "gf_trader", p_runtime.Runtime_sys)
+			return gf_err
 		}
 	}
 

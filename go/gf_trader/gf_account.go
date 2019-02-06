@@ -129,7 +129,7 @@ func account__create(p_account_name_str string,
 		//DB
 		err = p_runtime.Runtime_sys.Mongodb_coll.Insert(gf_account)
 		if err != nil {
-			gf_err := gf_core.Error__create("failed to insert an account into the DB",
+			gf_err := gf_core.Error__create("failed to insert an gf_account into the DB",
 				"mongodb_insert_error",
 				&map[string]interface{}{"account_name_str":p_account_name_str,},
 				err, "gf_trader", p_runtime.Runtime_sys)
