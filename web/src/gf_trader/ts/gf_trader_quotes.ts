@@ -17,6 +17,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+import "./gf_trader";
+import "./gf_trader_transactions";
+
 namespace gf_trader_quotes {
 
 declare var EventSource;
@@ -94,17 +97,18 @@ export function view_quote(p_q_map, p_log_fun) {
     	</div>`);
 
     if (price_change_nominal_f > 0) {
-    	$(q).find('.change_nominal').css('background-color','#80ff80');
+    	$(q).find('.change_nominal').css('background-color', '#80ff80');
     } else {
-    	$(q).find('.change_nominal').css('background-color','red');
+    	$(q).find('.change_nominal').css('background-color', 'red');
     }
 
     if (price_change_percent_f > 0) {
-    	$(q).find('.change_percent').css('background-color','#80ff80');
+    	$(q).find('.change_percent').css('background-color', '#80ff80');
     } else {
-    	$(q).find('.change_percent').css('background-color','red');
+    	$(q).find('.change_percent').css('background-color', 'red');
     }
 
+	var last_trade_price_f = 0.0; //FIX!!
     $(q).find('.buy_btn').on('click',()=>{
     	const b = gf_trader_transactions.view__buy_dialog(symbol_str, last_trade_price_f, p_log_fun);
     	$(q).find('.transactions').append(b);
@@ -114,9 +118,9 @@ export function view_quote(p_q_map, p_log_fun) {
 
     	//------------------------
     	//CLOSE_BTN
-    	const close_btn = $(`<div class='plot_close_btn'>x</div>`)
+    	const close_btn = $(`<div class='plot_close_btn'>x</div>`);
 		$(q).append(close_btn);
-		$(close_btn).on('click',()=>{
+		$(close_btn).on('click', ()=>{
 			$(close_btn).remove();
 			$(q).find('.svg_plot').remove();
 			$(q).find('.plots').remove();

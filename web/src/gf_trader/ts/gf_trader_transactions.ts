@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-///<reference path="./d/jquery.d.ts" />
+///<reference path="./../../d/jquery.d.ts" />
 
 namespace gf_trader_transactions {
 
@@ -70,8 +70,6 @@ export function view__buy_dialog(p_stock_symbol_str, p_stock_price_f, p_log_fun)
 
 	$('#execute_btn').on('click',()=>{
 
-
-
 	});
 
 	return b;
@@ -79,7 +77,7 @@ export function view__buy_dialog(p_stock_symbol_str, p_stock_price_f, p_log_fun)
 //---------------------------------------------------
 export function init__import(p_log_fun) {
 
-	$('#transactions #import_btn').on('click',()=>{
+	$('#transactions #import_btn').on('click', ()=>{
 
 		const import_dialog = $(`
 			<div id='import_dialog'>
@@ -129,7 +127,6 @@ export function init__import(p_log_fun) {
 
 		$(import_dialog).find('#create_btn').on('click', ()=>{
 
-
 			const transaction_map = {
 				'symbol_str':        $(import_dialog).find('#symbol_input').val(),
 				'date':              $(import_dialog).find('#date_input').val(),
@@ -145,13 +142,13 @@ export function init__import(p_log_fun) {
 	});
 }
 //---------------------------------------------------
-export function http__transaction_execute(p_onComplete_fun, p_onError_fun, p_log_fun) {
+export function http__transaction_execute(p_on_complete_fun, p_on_error_fun, p_log_fun) {
 
 	const url_str = '/trader/transaction/import';
     p_log_fun('INFO','url_str - '+url_str);   
 }
 //---------------------------------------------------
-export function http__transaction_import(p_transaction_map :Object, p_onComplete_fun, p_onError_fun, p_log_fun) {
+export function http__transaction_import(p_transaction_map :Object, p_on_complete_fun, p_on_error_fun, p_log_fun) {
 
     const url_str = '/trader/transaction/import';
     p_log_fun('INFO','url_str - '+url_str);
@@ -169,10 +166,10 @@ export function http__transaction_import(p_transaction_map :Object, p_onComplete
             
             if (data_map["status_str"] == 'OK') {
                 const quotes_lst = data_map['quotes_lst'];
-                p_onComplete_fun(quotes_lst);
+                p_on_complete_fun(quotes_lst);
             }
             else {
-                p_onError_fun(data_map["data"]);
+                p_on_error_fun(data_map["data"]);
             }
         });
     //------------------------- 

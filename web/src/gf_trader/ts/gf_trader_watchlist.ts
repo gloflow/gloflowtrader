@@ -17,8 +17,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-///<reference path="./d/jquery.d.ts" />
+///<reference path="./../../d/jquery.d.ts" />
 
+import "./gf_trader";
+import "./gf_trader_quotes";
 
 namespace gf_trader_watchlist {
 
@@ -72,12 +74,11 @@ export function view(p_log_fun) {
 			//IMPORTANT!! - sort stocks by change in dollar amount of price
 			//              sort(()=>{}) - return -1, 0, or 1
 			p_quotes_lst.sort((a, b)=>{
-				return b['price_change_nominal_f'] - a['price_change_nominal_f']
+				return b['price_change_nominal_f'] - a['price_change_nominal_f'];
 			});
 			//-----------------------
 
 			p_quotes_lst.forEach((q_map)=>{
-			//for (var q_map of p_quotes_lst) {
 				
 				const quote = gf_trader_quotes.view_quote(q_map, p_log_fun);
 				$(container).find('.quotes').append(quote);

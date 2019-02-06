@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-///<reference path="./d/jquery.d.ts" />
+///<reference path="./../../d/jquery.d.ts" />
 
 namespace gf_trader_gemini {
 
@@ -82,10 +82,7 @@ export function init(p_log_fun) {
     return container;
 }
 //---------------------------------------------------
-function draw_y_axis(p_max_price_f
-    p_min_price_f,
-    p_canvas_height_int,
-    p_p5) {
+function draw_y_axis(p_max_price_f, p_min_price_f, p_canvas_height_int, p_p5) {
 
     //------------
     //AXIS
@@ -172,8 +169,8 @@ function init_p5(p_price_data_lst, p_log_fun) {
                 canvas_width_int,
                 p5);
 
-            const prev_x_f        = null;
-            const prev_y_inverted = null;
+            var prev_x_f        = null;
+            var prev_y_inverted = null;
 
             for (var i=0; i < p_price_data_lst.length; i++) {
 
@@ -195,14 +192,6 @@ function init_p5(p_price_data_lst, p_log_fun) {
                 const y_f        = (canvas_height_int * price_delta_f) / price_range_f;
                 const y_inverted = canvas_height_int - y_f; //IMPORTANT!! - invert because p5 coord system is upper-left corner
                 //-------------------
-
-
-
-
-
-
-                //console.log('price_f - '+price_f)
-                //console.log('>>>> -- '+price_range_f+' - '+y_f)
 
                 p5.stroke(255);
                 p5.rect(x_f-(price_point_dim_f/2),y_inverted-(price_point_dim_f/2),price_point_dim_f,price_point_dim_f);
@@ -242,7 +231,7 @@ export function init_updates(p_price_data_lst, p_container, p_log_fun) {
     //const seconds_samples_num_int = 60*6; //number of seconds-resolution price datapoints
     p_price_data_lst.push(initial_price_f);
 
-    setInterval(function() {
+    setInterval(()=>{
 
         //IMPORTANT!! - if there is a certain number of prices
         //              remove the first price in order to stay in the range and be able
@@ -253,7 +242,7 @@ export function init_updates(p_price_data_lst, p_container, p_log_fun) {
 
         p_price_data_lst.push(market_summary_map['last_price_f']);
 
-    },2000);
+    }, 2000);
 
     event_source.onmessage = (p_e)=>{
 
