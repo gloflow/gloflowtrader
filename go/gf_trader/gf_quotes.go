@@ -25,11 +25,11 @@ import (
 	"net/http"
 	"github.com/globalsign/mgo/bson"
 	"github.com/fatih/color"
-	finance "github.com/piquette/finance-go"
+	//finance "github.com/piquette/finance-go"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gloflow/gloflow/go/gf_core"
 
-	//"github.com/FlashBoys/go-finance"
+	finance "github.com/FlashBoys/go-finance"
 	//"github.com/shopspring/decimal"
 )
 //-------------------------------------------------
@@ -243,14 +243,18 @@ func stock_quote__create_new(p_symbol_str string,
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER","gf_quotes.stock_quote__create_new()")
 
 	//q_lst,err := finance.GetQuotes([]string{p_symbol_str,})
-	q, err := finance.quote.Get(p_symbol_str)
+	q, err := finance.GetQuote(p_symbol_str) //finance.quote.Get(p_symbol_str)
 	if err != nil {
-    	return nil,err
+		gf_err := gf_core.Error__create("go-finance failed to get a quote via GetQuote() function",
+			"library_error",
+			&map[string]interface{}{"symbol_str": p_symbol_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+    	return nil, gf_err
     }
 
     //q                         := q_lst[0]
     quote_name_str             := q.Name
-    trade_time_f               := float64(q.LastTradeTime.Unix())
+    trade_time_f               := 0.0 //float64(q.LastTradeTime.t.Unix())
 	price__f, _                := q.LastTradePrice.Float64()
 	price__change_nominal_f, _ := q.ChangeNominal.Float64()
 	price__change_percent_f, _ := q.ChangePercent.Float64()

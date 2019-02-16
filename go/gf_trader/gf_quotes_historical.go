@@ -24,6 +24,7 @@ import (
 	"time"
 	"sort"
 	"github.com/globalsign/mgo/bson"
+	//"github.com/piquette/finance-go"
 	"github.com/FlashBoys/go-finance"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
@@ -62,7 +63,7 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Gf_quot
 	//         1 month of stock quotes. 
 
 	//start,_ := time.Parse(time.RFC3339,"2016-12-01T16:00:00+00:00")
-	end   := time.Now() //start.AddDate(0, 1, 0) //1 month period
+	end   := time.Now()          //start.AddDate(0, 1, 0) //1 month period
 	start := end.AddDate(0,-2,0) //time.Date(2016,time.November,1,16,0,0,0,time.UTC)//
     //--------------------
 
@@ -73,9 +74,13 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Gf_quot
 
     // Request daily history for TWTR.
     // IntervalDaily OR IntervalWeekly OR IntervalMonthly are supported.
-    bars_lst, err := finance.GetQuoteHistory(p_symbol_str, start, end, finance.IntervalDaily)
+    bars_lst, err := finance.GetHistory(p_symbol_str, finance.NewDatetime(start), finance.NewDatetime(end), finance.Day) //GetQuoteHistory(p_symbol_str, start, end, finance.IntervalDaily)
     if err != nil {
-        return nil, err
+		gf_err := gf_core.Error__create("go-finance failed to get symbol history via GetHistory() function",
+			"library_error",
+			&map[string]interface{}{"symbol_str": p_symbol_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+        return nil, gf_err
     }
 
     gf_quotes_lst := []*Gf_quote__day_historical{}
@@ -92,7 +97,7 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Gf_quot
 
     	creation_unix_time_f := float64(time.Now().UnixNano())/1000000000.0
 		id_str               := "gf_quote_day_historical__"+fmt.Sprint(creation_unix_time_f)
-		date_f               := float64(b.Date.Unix())
+		date_f               := 0.0 //float64(b.Date.Unix())
 		open_price_f,_       := b.Open.Float64()
 		high_price_f,_       := b.High.Float64()
 		low_price_f,_        := b.Low.Float64()
