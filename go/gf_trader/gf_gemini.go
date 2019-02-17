@@ -98,7 +98,7 @@ func gemini__init_symbol(p_symbol_str string,
 				return
 			}
 
-			fmt.Println("---- message - "+fmt.Sprint(message_map))
+			//fmt.Println("---- message - "+fmt.Sprint(message_map))
 
 			//type_str        := message_map["type"].(string) //"update"
 			//event_id_int    := message_map["eventId"].(int)

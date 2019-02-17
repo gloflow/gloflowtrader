@@ -15,6 +15,8 @@ github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8 h1:DujepqpGd1hyOd7a
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
 github.com/gloflow/gloflow v0.0.0-20190203051709-a279e3c18a26 h1:B+h7VgiRHNCk3wF4ZzvjsMyGipxPj41AQMmkESsGtnU=
 github.com/gloflow/gloflow v0.0.0-20190203051709-a279e3c18a26/go.mod h1:SPtxAEb6HpzE99u/jEw4KhZK+xeuKqClrqWJnQQNrW8=
+github.com/gloflow/gloflow v0.0.0-20190216213331-183163ece8b9 h1:iLDtNPnL8E9Z8F0uZ1ybYCLoAJmZgEgF5YhsZGKg6g8=
+github.com/gloflow/gloflow v0.0.0-20190216213331-183163ece8b9/go.mod h1:SPtxAEb6HpzE99u/jEw4KhZK+xeuKqClrqWJnQQNrW8=
 github.com/gorilla/websocket v1.4.0 h1:WDFjx/TMzVgy9VdMMQi2K2Emtwi2QcUQsztZ/zLaH/Q=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/ianoshen/uaparser v0.0.0-20170929040706-6aabb7c4e98c/go.mod h1:rJLuv1a4jtNqEZh3ITn3qTOhVFaPKZNlaN1uJm35eME=

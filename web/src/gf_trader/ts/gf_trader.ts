@@ -25,6 +25,7 @@ import * as gf_trader_transactions from "./gf_trader_transactions";
 
 //---------------------------------------------------
 $(document).ready(()=>{
+
     //-------------------------------------------------
     function log_fun(p_g,p_m) {
         var msg_str = p_g+':'+p_m
@@ -44,6 +45,7 @@ $(document).ready(()=>{
 });
 //---------------------------------------------------
 export function init(p_log_fun) {
+    p_log_fun('FUN_ENTER', 'gf_trader.init()');
 
     var stocks__open_bool = false;
     var crypto__open_bool = false;

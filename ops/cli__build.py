@@ -29,6 +29,7 @@ import gf_web_meta
 
 sys.path.append('%s/../../gloflow/ops/utils'%(cwd_str))
 import gf_build
+import gf_cli_utils
 
 sys.path.append('%s/../../gloflow/ops/tests'%(cwd_str))
 import gf_tests
@@ -86,6 +87,14 @@ def main():
         apps_meta_map  = gf_web_meta.get() 
 
         gf_web__build.build(apps_names_lst, apps_meta_map, log_fun)
+
+
+        #TEMPORARY!! - copies built web code to the bin/ dir where the Go binary is placed, 
+        #              so if the binary is run directly it can serve the web code.
+        web_build_dir_str = apps_meta_map[app_name_str]['pages_map']['gf_trader']['build_dir_str']
+        gf_cli_utils.run_cmd('cp -r %s/* %s/../bin/gf_trader/static'%(web_build_dir_str, cwd_str))
+
+        
     #-------------
     #BUILD_CONTAINERS
     elif run_str == 'build_containers':

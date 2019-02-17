@@ -88,12 +88,12 @@ func main() {
 	gemini__init(runtime)
 	//------------------------
 
-	test()
+	//test()
 
-	log_fun("INFO",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-	log_fun("INFO","STARTING HTTP SERVER - PORT - "+port_str)
-	log_fun("INFO","http://localhost:4400/trader/static/gf_trader.html")
-	log_fun("INFO",">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+	log_fun("INFO", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+	log_fun("INFO", "STARTING HTTP SERVER - PORT - "+port_str)
+	log_fun("INFO", "http://localhost:4400/trader/static/templates/gf_trader/gf_trader.html")
+	log_fun("INFO", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 	
 	http_err := http.ListenAndServe(":"+port_str,nil)
 	if http_err != nil {
