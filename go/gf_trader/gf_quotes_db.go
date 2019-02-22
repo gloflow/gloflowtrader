@@ -23,6 +23,7 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
+
 //-------------------------------------------------
 func quote__get_from_db(p_symbol_str string, p_runtime *Runtime) (*Gf_quote, *gf_core.Gf_error) {
 
@@ -37,6 +38,7 @@ func quote__get_from_db(p_symbol_str string, p_runtime *Runtime) (*Gf_quote, *gf
 	}
 	return gf_quote, nil
 }
+
 //-------------------------------------------------
 func quote__persist(p_gf_quote *Gf_quote, p_runtime *Runtime) *gf_core.Gf_error {
 
@@ -50,6 +52,7 @@ func quote__persist(p_gf_quote *Gf_quote, p_runtime *Runtime) *gf_core.Gf_error 
 	}
 	return nil
 }
+
 //-------------------------------------------------
 func quote__exists_in_db(p_symbol_str string, p_runtime *Runtime) (bool, *gf_core.Gf_error) {
 

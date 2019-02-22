@@ -74,10 +74,86 @@ export function init(p_log_fun) {
 
     init_p5(price_data_lst, p_log_fun);
 
-    
     init_updates(price_data_lst, container, p_log_fun);
 
     return container;
+}
+//---------------------------------------------------
+function init_p5(p_price_data_lst, p_log_fun) {
+    p_log_fun('FUN_ENTER', 'gf_trader_gemini.init_p5()');
+        
+    const canvas_width_int  = 1500;
+    const canvas_height_int = 400;
+    const price_point_dim_f = 2.0;
+    const x_offset_f        = 10;
+
+    const p5_env = function(p5) {
+
+        p5.setup = function() {
+            p5.createCanvas(canvas_width_int, canvas_height_int);
+        };
+
+        p5.draw = function() {
+            p5.background(100);
+            p5.fill(255);
+
+            //IMPORTANT!! - plot is adjusted to only display the max/min price range. 
+            //              so that the min_price_f is at Y=0, and max_price_f is at Y=canvas_height_int
+            const max_price_f   = Math.max.apply(null, p_price_data_lst);
+            const min_price_f   = Math.min.apply(null, p_price_data_lst);
+            const price_range_f = max_price_f - min_price_f;
+
+            draw_y_axis(max_price_f,
+                min_price_f,
+                canvas_height_int,
+                p5);
+
+            draw_grid(max_price_f,
+                min_price_f,
+                canvas_height_int,
+                canvas_width_int,
+                p5);
+
+            var prev_x_f        = null;
+            var prev_y_inverted = null;
+
+            for (var i=0; i < p_price_data_lst.length; i++) {
+
+                //-------------------
+                const price_f    = p_price_data_lst[i];
+                const x_f        = x_offset_f+i*3;
+
+                //IMPORTANT!! - difference of the current price from the minimum price
+                //              in the price_range_f
+                const price_delta_f = price_f - min_price_f;
+                //-------------------
+                //IMPORTANT!! - convert price_delta_f to Y in pixels, so that it can 
+                //              be plotted.
+                //
+                //1. canvas_height_int : price_range_f = y : price_delta_f
+                //2. canvas_height_int * price_f = price_range_f * y
+                //3. y = (canvas_height_int * price_f) / price_range_f
+                
+                const y_f        = (canvas_height_int * price_delta_f) / price_range_f;
+                const y_inverted = canvas_height_int - y_f; //IMPORTANT!! - invert because p5 coord system is upper-left corner
+                //-------------------
+
+                p5.stroke(255);
+                p5.rect(x_f-(price_point_dim_f/2), y_inverted-(price_point_dim_f/2), price_point_dim_f, price_point_dim_f);
+
+                p5.stroke(153);
+                if (prev_x_f != null) {
+                    p5.line(prev_x_f, prev_y_inverted, x_f, y_inverted);
+                }
+
+                prev_x_f        = x_f;
+                prev_y_inverted = y_inverted;
+            }
+        };
+    };
+
+    const plot_containing_div_id_str = 'market_plot';
+    const custom_p5                  = new p5(p5_env, plot_containing_div_id_str);
 }
 //---------------------------------------------------
 function draw_y_axis(p_max_price_f, p_min_price_f, p_canvas_height_int, p_p5) {
@@ -132,83 +208,6 @@ function draw_grid(p_max_price_f,
     }
 }
 //---------------------------------------------------
-function init_p5(p_price_data_lst, p_log_fun) {
-    p_log_fun('FUN_ENTER', 'gf_trader_gemini.init_p5()');
-        
-    const canvas_width_int  = 1500;
-    const canvas_height_int = 400;
-    const price_point_dim_f = 2.0;
-    const x_offset_f        = 10;
-
-    const p5_env = function(p5) {
-
-        p5.setup = function() {
-            p5.createCanvas(canvas_width_int, canvas_height_int);
-        };
-
-        p5.draw = function() {
-            p5.background(100);
-            p5.fill(255);
-
-            //IMPORTANT!! - plot is adjusted to only display the max/min price range. 
-            //              so that the min_price_f is at Y=0, and max_price_f is at Y=canvas_height_int
-            const max_price_f   = Math.max.apply(null,p_price_data_lst);
-            const min_price_f   = Math.min.apply(null,p_price_data_lst);
-            const price_range_f = max_price_f - min_price_f;
-
-            draw_y_axis(max_price_f,
-                min_price_f,
-                canvas_height_int,
-                p5);
-
-            draw_grid(max_price_f,
-                min_price_f,
-                canvas_height_int,
-                canvas_width_int,
-                p5);
-
-            var prev_x_f        = null;
-            var prev_y_inverted = null;
-
-            for (var i=0; i < p_price_data_lst.length; i++) {
-
-                //-------------------
-                const price_f    = p_price_data_lst[i];
-                const x_f        = x_offset_f+i*3;
-
-                //IMPORTANT!! - difference of the current price from the minimum price
-                //              in the price_range_f
-                const price_delta_f = price_f - min_price_f;
-                //-------------------
-                //IMPORTANT!! - convert price_delta_f to Y in pixels, so that it can 
-                //              be plotted.
-                //
-                //1. canvas_height_int : price_range_f = y : price_delta_f
-                //2. canvas_height_int * price_f = price_range_f * y
-                //3. y = (canvas_height_int * price_f) / price_range_f
-                
-                const y_f        = (canvas_height_int * price_delta_f) / price_range_f;
-                const y_inverted = canvas_height_int - y_f; //IMPORTANT!! - invert because p5 coord system is upper-left corner
-                //-------------------
-
-                p5.stroke(255);
-                p5.rect(x_f-(price_point_dim_f/2),y_inverted-(price_point_dim_f/2),price_point_dim_f,price_point_dim_f);
-
-                p5.stroke(153);
-                if (prev_x_f != null) {
-                    p5.line(prev_x_f, prev_y_inverted, x_f, y_inverted);
-                }
-
-                prev_x_f        = x_f;
-                prev_y_inverted = y_inverted;
-            }
-        };
-    };
-
-    const plot_containing_div_id_str = 'market_plot';
-    const custom_p5                  = new p5(p5_env,plot_containing_div_id_str);
-}
-//---------------------------------------------------
 export function init_updates(p_price_data_lst, p_container, p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_gemini.init_updates()');
 
@@ -216,7 +215,7 @@ export function init_updates(p_price_data_lst, p_container, p_log_fun) {
     const events_id_str = "trader_gemini_events";
     const event_source  = new EventSource("/trader/events?events_id="+events_id_str)
 
-    const initial_price_f = 760.5;   //initial price that the plot will start at
+    const initial_price_f = 130.0;   //initial price that the plot will start at
     
     var   i = 0;
     const market_summary_map = {

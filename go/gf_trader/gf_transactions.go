@@ -25,6 +25,7 @@ import (
 	"github.com/globalsign/mgo/bson"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
+
 //-------------------------------------------------
 type Gf_transaction struct {
 	Id                   bson.ObjectId   `bson:"_id,omitempty"        json:"-"`
@@ -71,6 +72,7 @@ type Gf_transaction__extern__execute_input struct {
 	Share_cost_f      float64   `json:"share_cost_f"`
 	Type_str          string    `json:"type_str"`       //"buy"|"sell"
 }
+
 //-------------------------------------------------
 func transact__execute(p_extern_transaction *Gf_transaction__extern__execute_input,
 	p_gf_account *Gf_account,
@@ -106,6 +108,7 @@ func transact__execute(p_extern_transaction *Gf_transaction__extern__execute_inp
 
 	return gf_transaction, nil
 }
+
 //-------------------------------------------------
 func transact__import(p_extern_transaction *Gf_transaction__extern__import_input, p_runtime *Runtime) (*Gf_transaction, *gf_core.Gf_error) {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_transactions.transact__import()")
@@ -129,6 +132,7 @@ func transact__import(p_extern_transaction *Gf_transaction__extern__import_input
 
 	return gf_transaction, nil
 }
+
 //-------------------------------------------------
 func transact__persist(p_gf_transaction *Gf_transaction, p_runtime *Runtime) *gf_core.Gf_error {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_transactions.transact__persist()")

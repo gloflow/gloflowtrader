@@ -7,5 +7,5 @@ GLOFLOW TRADER
 Asset management/trading/research platform.  
 Built on the GloFlow platform    
 
-
+s
 Originally created by Ivan Trajkovic

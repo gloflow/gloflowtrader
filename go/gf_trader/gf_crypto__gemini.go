@@ -71,7 +71,7 @@ func gemini__init_symbol(p_symbol_str string,
 						p_symbol_name_str,
 						trade_time_f,
 						price_f,
-						price__change_nominal_f,
+					price__change_nominal_f,
 						price__change_percent_f,
 						p_runtime)
 					if gf_err != nil {

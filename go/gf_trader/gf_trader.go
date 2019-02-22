@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 package main
+
 //-------------------------------------------------
 import (
 	"fmt"
@@ -25,11 +26,13 @@ import (
 	"net/http"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
+
 //-------------------------------------------------
 type Runtime struct {
 	Events_ctx  *gf_core.Events_ctx
 	Runtime_sys *gf_core.Runtime_sys
 }
+
 //-------------------------------------------------
 func main() {
 	log_fun := gf_core.Init_log_fun()
@@ -83,11 +86,10 @@ func main() {
 	static_files__url_base_str := "/trader"
 	gf_core.HTTP__init_static_serving(static_files__url_base_str, runtime_sys)
 	//------------------------
-	//GEMINI_CRYPTO_EXCHANGE
-
+	//CRYPTO_EXCHANGES
 	gemini__init(runtime)
+	binance__init(runtime)
 	//------------------------
-
 	//test()
 
 	log_fun("INFO", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
@@ -95,7 +97,7 @@ func main() {
 	log_fun("INFO", "http://localhost:4400/trader/static/templates/gf_trader/gf_trader.html")
 	log_fun("INFO", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 	
-	http_err := http.ListenAndServe(":"+port_str,nil)
+	http_err := http.ListenAndServe(":"+port_str, nil)
 	if http_err != nil {
 		msg_str := "cant start listening on port - "+port_str
 		log_fun("ERROR", msg_str)
@@ -103,6 +105,7 @@ func main() {
 		panic(fmt.Sprint(http_err))
 	}
 }
+
 //-------------------------------------------------
 func market__is_open(p_runtime *Runtime) bool {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_trader.market__is_open()")

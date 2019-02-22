@@ -32,6 +32,7 @@ import (
 	finance "github.com/FlashBoys/go-finance"
 	//"github.com/shopspring/decimal"
 )
+
 //-------------------------------------------------
 type Gf_quote struct {
 	Id                     bson.ObjectId `json:"-"                      bson:"_id,omitempty"`
@@ -45,6 +46,7 @@ type Gf_quote struct {
 	Price_change_nominal_f float64       `json:"price_change_nominal_f" bson:"price_change_nominal_f"`
 	Price_change_percent_f float64       `json:"price_change_percent_f" bson:"price_change_percent_f"`
 }
+
 //-------------------------------------------------
 func test() {
 
@@ -102,6 +104,7 @@ func test() {
 
 	return //doc,nil
 }
+
 //-------------------------------------------------
 func repeated__get_quotes(p_runtime *Runtime) {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_quotes.repeated__get_quotes()")
@@ -122,6 +125,7 @@ func repeated__get_quotes(p_runtime *Runtime) {
 		}
 	}()
 }
+
 //-------------------------------------------------
 func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Gf_quote, *gf_core.Gf_error) {
 	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_quotes.quotes__get()")
@@ -208,6 +212,7 @@ func quotes__get(p_stock_symbols_lst []string, p_runtime *Runtime) ([]*Gf_quote,
 
     return gf_quotes_lst, nil
 }
+
 //-------------------------------------------------
 func quote__is_too_old(p_symbol_str string,
 	p_compare_to_time_f float64,
@@ -237,6 +242,7 @@ func quote__is_too_old(p_symbol_str string,
 
 	return false, nil
 }
+
 //-------------------------------------------------
 func stock_quote__create_new(p_symbol_str string,
 	p_runtime *Runtime) (*Gf_quote, *gf_core.Gf_error) {
@@ -290,6 +296,7 @@ func stock_quote__create_new(p_symbol_str string,
 
 	return gf_quote, nil
 }
+
 //-------------------------------------------------
 func quote__create(p_symbol_str string,
 	p_quote_name_str         string,

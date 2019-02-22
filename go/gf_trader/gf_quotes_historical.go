@@ -28,6 +28,7 @@ import (
 	"github.com/FlashBoys/go-finance"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
+
 //-------------------------------------------------
 type Gf_quote__day_historical struct {
 	Id                   bson.ObjectId `bson:"_id,omitempty"`
@@ -42,6 +43,7 @@ type Gf_quote__day_historical struct {
 	Close_price_f        float64       `bson:"close_price_f"        json:"close_price_f"`
 	Volume_int           int           `bson:"volume_int"           json:"volume_int"`
 }
+
 //-------------------------------------------------
 type quotes__day_historical []*Gf_quote__day_historical
 func (d_lst quotes__day_historical) Len() int {
@@ -135,6 +137,7 @@ func quotes_historical__get(p_symbol_str string, p_runtime *Runtime) ([]*Gf_quot
 
     return gf_quotes_lst, nil
 }
+
 //-------------------------------------------------
 func quote_historical__persist(p_gf_quote *Gf_quote__day_historical, p_runtime *Runtime) *gf_core.Gf_error {
 
