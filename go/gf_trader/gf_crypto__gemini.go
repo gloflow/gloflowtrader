@@ -26,7 +26,14 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
-
+//-------------------------------------------------
+type gf_market_data_parsed_event struct {
+	events_id_str   string
+	type_str        string
+	remote_type_str string //type of event in the remote market system
+	msg_str         string
+	data_map        map[string]interface{}
+}
 //-------------------------------------------------
 func gemini__init(p_runtime *Runtime) {
 
@@ -53,7 +60,7 @@ func gemini__init_symbol(p_symbol_str string,
 		return gf_err
 	}
 	//--------------------
-
+	//QUOTE PERSISTING
 	price_updates__ch := make(chan float64,100)
 	go func() {
 
@@ -71,7 +78,7 @@ func gemini__init_symbol(p_symbol_str string,
 						p_symbol_name_str,
 						trade_time_f,
 						price_f,
-					price__change_nominal_f,
+						price__change_nominal_f,
 						price__change_percent_f,
 						p_runtime)
 					if gf_err != nil {
@@ -82,6 +89,8 @@ func gemini__init_symbol(p_symbol_str string,
 			}
 		}
 	}()
+	//--------------------
+	//REMOTE_SYSTEM_STREAM_PROCESSING
 
 	go func() {
 		defer c.Close()
@@ -106,7 +115,32 @@ func gemini__init_symbol(p_symbol_str string,
 			//timestampms_int := message_map["timestampms"].(int)
 			//--------------------
 
+
 			market_events_lst := message_map["events"].([]interface{})
+
+			parsed_events_lst := parse_message(p_symbol_str, market_events_lst)
+
+
+			for _, parsed_event := range parsed_events_lst {
+				
+				//if the type of event is a "trade" in the remote market system,
+				//then just send the clients of the price_feed the price update
+				if parsed_event.remote_type_str == "trade" {
+					price_updates__ch <- parsed_event.data_map["e__price_f"].(float64) //e__price_f
+				}
+				
+				//-----------------------
+				//SEND_EVENT
+				gf_core.Events__send_event(parsed_event.events_id_str,
+					parsed_event.type_str, //p_type_str
+					parsed_event.msg_str,  //p_msg_str
+					parsed_event.data_map, //p_data_map
+					p_runtime.Events_ctx,
+					p_runtime.Runtime_sys)
+				//-----------------------
+			}
+
+			/*market_events_lst := message_map["events"].([]interface{})
 
 			for _,market_event := range market_events_lst {
 
@@ -173,8 +207,74 @@ func gemini__init_symbol(p_symbol_str string,
 					p_runtime.Events_ctx,
 					p_runtime.Runtime_sys)
 				//-----------------------
-			}
+			}*/
 		}
 	}()
 	return nil
+}
+
+//-------------------------------------------------
+func parse_message(p_symbol_str string,
+	p_market_events_lst []interface{}) []*gf_market_data_parsed_event {
+
+	parsed_events_lst := []*gf_market_data_parsed_event{}
+	for _, market_event := range p_market_events_lst {
+
+		market_event_map := market_event.(map[string]interface{})
+
+		//the price of this order book entry.
+		e__price_f, _ := strconv.ParseFloat(market_event_map["price"].(string),32)
+		e__type_str   := market_event_map["type"].(string) //"change" - its always that value
+		
+		events_id_str  := "trader_gemini_events"
+		event_type_str := "gemini_market_update"
+		event_msg_str  := "ETH market update"
+		event_data_map := map[string]interface{}{
+			"e__symbol_str": p_symbol_str,
+			"e__price_f":    e__price_f,
+			"e__type_str":   e__type_str,
+		}
+
+		parsed_event := &gf_market_data_parsed_event{
+			events_id_str: events_id_str,
+			type_str:      event_type_str,
+			msg_str:       event_msg_str,
+			data_map:      event_data_map, 
+		}
+		parsed_events_lst = append(parsed_events_lst, parsed_event)
+		
+
+		//e__reason_str - "place"|"trade"|"cancel"|"initial"
+		//                indicates why the "change" (e__type_str) has occurred.
+		if e__reason_str, ok := market_event_map["reason"].(string); ok {
+
+			parsed_event.remote_type_str = e__reason_str
+
+			//ADD!! - handle the initial data, that represents the market orders
+			//        that are active before the WebSockets clients connected 
+			//        to Gemini servers.
+			if e__reason_str == "initial" {
+
+			}
+
+			event_data_map["e__reason_str"] = e__reason_str //DEPRECATED!! - is this used?
+		}
+
+		//"bid"|"ask"
+		if e__side_str, ok := market_event_map["side"].(string); ok {
+			event_data_map["e__side_str"] = e__side_str
+		}
+
+		//REMAINING_ORDER_ETH/BTC - amount still remaining of the original market order?
+		if remaining_str, ok := market_event_map["remaining"].(string); ok {
+			e__remaining_f, _ := strconv.ParseFloat(remaining_str, 32)
+			event_data_map["e__remaining_f"] = e__remaining_f
+		}
+
+		if delta_str, ok := market_event_map["delta"].(string); ok {
+			e__delta_f, _ := strconv.ParseFloat(delta_str, 32)
+			event_data_map["e__delta_f"] = e__delta_f
+		}
+	}
+	return parsed_events_lst
 }

@@ -87,7 +87,7 @@ func main() {
 	gf_core.HTTP__init_static_serving(static_files__url_base_str, runtime_sys)
 	//------------------------
 	//CRYPTO_EXCHANGES
-	gemini__init(runtime)
+	//gemini__init(runtime)
 	binance__init(runtime)
 	//------------------------
 	//test()
@@ -108,7 +108,7 @@ func main() {
 
 //-------------------------------------------------
 func market__is_open(p_runtime *Runtime) bool {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_trader.market__is_open()")
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_service.market__is_open()")
 
 	t := time.Now()
 
