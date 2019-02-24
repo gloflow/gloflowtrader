@@ -26,6 +26,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
+
 //-------------------------------------------------
 type gf_market_data_parsed_event struct {
 	events_id_str   string
@@ -34,34 +35,14 @@ type gf_market_data_parsed_event struct {
 	msg_str         string
 	data_map        map[string]interface{}
 }
-//-------------------------------------------------
-func gemini__init(p_runtime *Runtime) {
 
-	gemini__init_symbol("ETHUSD", "etherium_dollar", p_runtime)
-	gemini__init_symbol("BTCUSD", "bitcoin_dollar",  p_runtime)
-}
 //-------------------------------------------------
-func gemini__init_symbol(p_symbol_str string,
+func quote__init_persist_stream(p_symbol_str string,
 	p_symbol_name_str string,
-	p_runtime         *Runtime) *gf_core.Gf_error {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_gemini.gemini__init()")
+	p_runtime         *Runtime) chan float64 {
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_crypto__gemini.quote__init_persist_stream()")
 
-	//--------------------
-	//url_str := "wss://api.gemini.com/v1/marketdata/BTCUSD"
-	url_str := fmt.Sprintf("wss://api.gemini.com/v1/marketdata/%s", p_symbol_str)
-
-	var ws_dialer *websocket.Dialer
-	c, _, err := ws_dialer.Dial(url_str, nil)
-	if err != nil {
-		gf_err := gf_core.Error__create("failed to connect to Gemini marketdata websocket url",
-			"ws_connection_init_error",
-			&map[string]interface{}{"url_str": url_str,},
-			err, "gf_trader", p_runtime.Runtime_sys)
-		return gf_err
-	}
-	//--------------------
-	//QUOTE PERSISTING
-	price_updates__ch := make(chan float64,100)
+	price_updates__ch := make(chan float64, 100)
 	go func() {
 
 		price__last_f := 0.0
@@ -89,6 +70,67 @@ func gemini__init_symbol(p_symbol_str string,
 			}
 		}
 	}()
+	return price_updates__ch
+}
+
+//-------------------------------------------------
+func gemini__init(p_runtime *Runtime) {
+
+	gemini__init_symbol("ETHUSD", "etherium_dollar", p_runtime)
+	gemini__init_symbol("BTCUSD", "bitcoin_dollar",  p_runtime)
+}
+
+//-------------------------------------------------
+func gemini__init_symbol(p_symbol_str string,
+	p_symbol_name_str string,
+	p_runtime         *Runtime) *gf_core.Gf_error {
+	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_crypto__gemini.gemini__init()")
+
+	//--------------------
+	//url_str := "wss://api.gemini.com/v1/marketdata/BTCUSD"
+	url_str := fmt.Sprintf("wss://api.gemini.com/v1/marketdata/%s", p_symbol_str)
+
+	var ws_dialer *websocket.Dialer
+	c, _, err := ws_dialer.Dial(url_str, nil)
+	if err != nil {
+		gf_err := gf_core.Error__create("failed to connect to Gemini marketdata websocket url",
+			"ws_connection_init_error",
+			&map[string]interface{}{"url_str": url_str,},
+			err, "gf_trader", p_runtime.Runtime_sys)
+		return gf_err
+	}
+	//--------------------
+	//QUOTE PERSISTING
+	/*price_updates__ch := make(chan float64,100)
+	go func() {
+
+		price__last_f := 0.0
+		for {
+			select {
+				case new_price_f := <-price_updates__ch:
+
+					trade_time_f            := float64(time.Now().UnixNano())/1000000000.0
+					price_f                 := new_price_f
+					price__change_nominal_f := price_f - price__last_f
+					price__change_percent_f := (100*price__change_nominal_f)/price__last_f
+
+					_, gf_err := quote__create(p_symbol_str,
+						p_symbol_name_str,
+						trade_time_f,
+						price_f,
+						price__change_nominal_f,
+						price__change_percent_f,
+						p_runtime)
+					if gf_err != nil {
+						panic("cant create quote")
+					}
+
+					price__last_f = price_f
+			}
+		}
+	}()*/
+
+	price_updates__ch := quote__init_persist_stream(p_symbol_str, p_symbol_name_str, p_runtime)
 	//--------------------
 	//REMOTE_SYSTEM_STREAM_PROCESSING
 
@@ -106,20 +148,15 @@ func gemini__init_symbol(p_symbol_str string,
 				fmt.Println("read:", err)
 				return
 			}
-
 			//fmt.Println("---- message - "+fmt.Sprint(message_map))
-
 			//type_str        := message_map["type"].(string) //"update"
 			//event_id_int    := message_map["eventId"].(int)
 			//timestamp_int   := message_map["timestamp"].(int)
 			//timestampms_int := message_map["timestampms"].(int)
 			//--------------------
 
-
 			market_events_lst := message_map["events"].([]interface{})
-
-			parsed_events_lst := parse_message(p_symbol_str, market_events_lst)
-
+			parsed_events_lst := gemini__parse_message(p_symbol_str, market_events_lst)
 
 			for _, parsed_event := range parsed_events_lst {
 				
@@ -139,82 +176,14 @@ func gemini__init_symbol(p_symbol_str string,
 					p_runtime.Runtime_sys)
 				//-----------------------
 			}
-
-			/*market_events_lst := message_map["events"].([]interface{})
-
-			for _,market_event := range market_events_lst {
-
-				market_event_map := market_event.(map[string]interface{})
-
-				//the price of this order book entry.
-				e__price_f,_ := strconv.ParseFloat(market_event_map["price"].(string),32)
-				e__type_str  := market_event_map["type"].(string) //"change" - its always that value
-				
-				events_id_str  := "trader_gemini_events"
-				event_type_str := "gemini_market_update"
-				event_msg_str  := "ETH market update"
-				event_data_map := map[string]interface{}{
-					"e__symbol_str": p_symbol_str,
-					"e__price_f":    e__price_f,
-					"e__type_str":   e__type_str,
-				}
-
-
-				//e__reason_str - "place"|"trade"|"cancel"|"initial"
-				//                indicates why the "change" (e__type_str) has occurred.
-				if e__reason_str,ok := market_event_map["reason"].(string); ok {
-
-
-					//ADD!! - handle the initial data, that represents the market orders
-					//        that are active before the WebSockets clients connected 
-					//        to Gemini servers.
-					if e__reason_str == "initial" {
-
-					}
-
-					event_data_map["e__reason_str"] = e__reason_str
-
-					//-----------------------
-					//IMPORTANT!! - if its a trade, its price is the new current price of the asset
-					if e__reason_str == "trade" {
-						price_updates__ch <- e__price_f
-					}
-					//-----------------------
-				}
-
-				//"bid"|"ask"
-				if e__side_str,ok := market_event_map["side"].(string); ok {
-					event_data_map["e__side_str"] = e__side_str
-				}
-
-				//REMAINING_ORDER_ETH/BTC - amount still remaining of the original market order?
-				if remaining_str,ok := market_event_map["remaining"].(string); ok {
-					e__remaining_f,_ := strconv.ParseFloat(remaining_str,32)
-					event_data_map["e__remaining_f"] = e__remaining_f
-				}
-
-				if delta_str,ok := market_event_map["delta"].(string); ok {
-					e__delta_f,_ := strconv.ParseFloat(delta_str,32)
-					event_data_map["e__delta_f"] = e__delta_f
-				}
-
-				//-----------------------
-				//SEND_EVENT
-				gf_core.Events__send_event(events_id_str,
-					event_type_str,       //p_type_str
-					event_msg_str,        //p_msg_str
-					event_data_map,       //p_data_map
-					p_runtime.Events_ctx,
-					p_runtime.Runtime_sys)
-				//-----------------------
-			}*/
 		}
 	}()
+	//--------------------
 	return nil
 }
 
 //-------------------------------------------------
-func parse_message(p_symbol_str string,
+func gemini__parse_message(p_symbol_str string,
 	p_market_events_lst []interface{}) []*gf_market_data_parsed_event {
 
 	parsed_events_lst := []*gf_market_data_parsed_event{}
@@ -228,7 +197,7 @@ func parse_message(p_symbol_str string,
 		
 		events_id_str  := "trader_gemini_events"
 		event_type_str := "gemini_market_update"
-		event_msg_str  := "ETH market update"
+		event_msg_str  := fmt.Sprintf("%s market update", p_symbol_str)
 		event_data_map := map[string]interface{}{
 			"e__symbol_str": p_symbol_str,
 			"e__price_f":    e__price_f,

@@ -22,6 +22,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"strconv"
 	"github.com/gorilla/websocket"
 	"github.com/gloflow/gloflow/go/gf_core"
 )
@@ -55,6 +56,7 @@ func binance__init_symbol(p_symbol_str string,
 	//--------------------
 
 
+	price_updates__ch := quote__init_persist_stream(p_symbol_str, p_symbol_name_str, p_runtime)
 
 	go func() {
 		defer c.Close()
@@ -71,14 +73,72 @@ func binance__init_symbol(p_symbol_str string,
 				fmt.Println("read:", err)
 				return
 			}
-
-
-
 			fmt.Println(message_map)
 			//--------------------
+			market_event_map := message_map
+			parsed_event     := binance__parse_message(p_symbol_str, market_event_map)
 
+			price_updates__ch <- parsed_event.data_map["e__price_f"].(float64) //e__price_f
+
+			//-----------------------
+			//SEND_EVENT
+			gf_core.Events__send_event(parsed_event.events_id_str,
+				parsed_event.type_str, //p_type_str
+				parsed_event.msg_str,  //p_msg_str
+				parsed_event.data_map, //p_data_map
+				p_runtime.Events_ctx,
+				p_runtime.Runtime_sys)
+			//-----------------------
 		}
 	}()
 
 	return nil
+}
+
+//-------------------------------------------------
+func binance__parse_message(p_symbol_str string,
+	p_market_event map[string]interface{}) *gf_market_data_parsed_event {
+	//p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_crypto__binance.binance__parse_message()")
+
+
+	/*{
+		"e": "aggTrade",  // Event type
+		"E": 123456789,   // Event time
+		"s": "BNBBTC",    // Symbol
+		"a": 12345,       // Aggregate trade ID
+		"p": "0.001",     // Price
+		"q": "100",       // Quantity
+		"f": 100,         // First trade ID
+		"l": 105,         // Last trade ID
+		"T": 123456785,   // Trade time
+		"m": true,        // Is the buyer the market maker?
+		"M": true         // Ignore
+	}*/
+
+	event_remote_time_f        := p_market_event["E"].(float64)
+	trade_remote_time_f        := p_market_event["T"].(float64)
+	trade_is_market_maker_bool := p_market_event["m"].(bool)
+	e__price_str               := p_market_event["p"].(string)
+	e__price_f, _              := strconv.ParseFloat(e__price_str, 64)
+
+
+	events_id_str  := "trader_binance_events"
+	event_type_str := "binance_market_update"
+	event_msg_str  := fmt.Sprintf("%s market update", p_symbol_str)
+	event_data_map := map[string]interface{}{
+		"e__symbol_str":                 p_symbol_str,
+		"e__price_f":                    e__price_f,
+		"e__event_remote_time_f":        event_remote_time_f,
+		"e__trade_remote_time_f":        trade_remote_time_f,
+		"e__trade_is_market_maker_bool": trade_is_market_maker_bool,
+	}
+
+	parsed_event := &gf_market_data_parsed_event{
+		events_id_str: events_id_str,
+		type_str:      event_type_str,
+		msg_str:       event_msg_str,
+		data_map:      event_data_map, 
+	}
+
+	return parsed_event
 }
