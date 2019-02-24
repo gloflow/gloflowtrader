@@ -33,12 +33,11 @@ export function init_updates(p_log_fun) {
     console.log("REGISTER EVENT_SOURCE");
 
     var i=0;
-    event_source.onmessage = (p_e)=>{
+    event_source.onmessage = (p_e) => {
         console.log('>>>>> MESSAGE');
         const event_data_map = JSON.parse(p_e.data);
         
-        console.log(event_data_map)
-        
+        console.log(event_data_map)        
         view__update(event_data_map, p_log_fun);
 
         i+=1;
@@ -164,8 +163,7 @@ export function view_quote(p_q_map, p_log_fun) {
 	    gf_trader.http__get_symbols_daily_historic([symbol_str],
 			(p_quotes_lst)=>{
 
-				console.log('aaaaaaaaaaaaaaaaa')
-				console.log(p_quotes_lst)
+				//console.log(p_quotes_lst)
 
 				const plot_id_str = symbol_str+'_plot';
 				const plot        = $(`
