@@ -1,0 +1,90 @@
+
+
+
+
+.market_feed {
+
+	.title {
+		position:         absolute;
+		right:            -225px;
+		color:            black;
+    	background-color: #00fffd;
+	}
+	.market_summary {
+		position: absolute;
+    	top:      53px;
+		right:    -243px;
+		background-color: #00fffe;
+	}
+
+	//BID
+	.market_data .bid {
+		position: absolute;
+		left:     0px;
+		width:    780px;
+		height:   1000px;
+		background-color: #e6e6e6;
+	
+		.trade__data {
+			position: absolute;
+			width:    390px;
+		}
+
+		.place_and_cancel__data {
+			position: absolute;
+			left: 390px;
+			width: 420px;
+		}
+
+		.title {
+			font-size: 16px;
+			color: black;
+		}
+
+		.price .reason {
+			font-size: 14px;
+		}
+	}
+	
+	//ASK
+	.market_data .ask {
+		position: absolute;
+		left:     780px;
+		width:    500px;
+	
+		.trade__data {
+			position: absolute;
+			width:    390px;
+		}
+
+		.place_and_cancel__data {
+			position: absolute;
+			left:     390px;
+			width:    420px;
+		}
+
+		.title {
+			font-size: 16px;
+			color:     black;
+		}
+	}
+	
+	.market_data .price .reason {
+		font-size: 14px;
+	
+		.reason__cancel {
+			font-size:        14px;
+			background-color: red;
+		}
+
+		.reason__place {
+			font-size:        14px;
+			background-color: #5e84da;
+		}
+
+		.reason__trade {
+			font-size:        14px;
+			background-color: green;
+		}
+	}
+}

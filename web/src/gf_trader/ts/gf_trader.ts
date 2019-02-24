@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ///<reference path="./../../d/jquery.d.ts" />
 
 import * as gf_trader_watchlist    from "./gf_trader_watchlist";
-import * as gf_trader_gemini       from "./gf_trader_gemini";
+import * as gf_trader_market_feeds from "./gf_trader_market_feeds";
 import * as gf_trader_transactions from "./gf_trader_transactions";
 
 //---------------------------------------------------
@@ -84,8 +84,13 @@ export function init(p_log_fun) {
                 stocks__open_bool = false;
             }
 
-            crypto_container = gf_trader_gemini.init(p_log_fun);
-            
+            crypto_container = gf_trader_market_feeds.init(p_log_fun);
+
+            /*//<canvas> needs to be reinitialize on window screen resizing, to be reactive.
+            $(window).resize(()=>{
+                crypto_container = gf_trader_market_feeds.init(p_log_fun);
+            });*/
+
             crypto__open_bool = true;
         }
     });

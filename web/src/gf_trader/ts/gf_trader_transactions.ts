@@ -52,7 +52,7 @@ export function view__buy_dialog(p_stock_symbol_str, p_stock_price_f, p_log_fun)
 	$(b).find('#close_btn').on('click', ()=>{
 		$(b).remove();
 	})
-
+	
 	$(b).find('input').keyup((e)=>{
 		const stocks_number_int = $(b).find('input').val();
 		const stock_debit_f     = stocks_number_int * p_stock_price_f;
@@ -64,7 +64,6 @@ export function view__buy_dialog(p_stock_symbol_str, p_stock_price_f, p_log_fun)
 		$(b).find('#comission .amount').text(comission_f.toFixed(2));
 		$(b).find('#total_debit .amount').text(total_debit_f.toFixed(2));
 	});
-
 
 	$('#execute_btn').on('click',()=>{
 
@@ -116,12 +115,9 @@ export function init__import(p_log_fun) {
 			</div>`);
 		$('#transactions').append(import_dialog);
 
-
-
 		$(import_dialog).find('#close_btn').on('click', ()=>{
 			$(import_dialog).remove();
 		});
-
 
 		$(import_dialog).find('#create_btn').on('click', ()=>{
 

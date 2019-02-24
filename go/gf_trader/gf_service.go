@@ -87,7 +87,7 @@ func main() {
 	gf_core.HTTP__init_static_serving(static_files__url_base_str, runtime_sys)
 	//------------------------
 	//CRYPTO_EXCHANGES
-	//gemini__init(runtime)
+	gemini__init(runtime)
 	binance__init(runtime)
 	//------------------------
 	//test()
