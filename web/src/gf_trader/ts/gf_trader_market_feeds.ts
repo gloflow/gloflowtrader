@@ -69,7 +69,7 @@ export function init(p_log_fun) {
                 </div>
             </div>
             <div id='gemini_feed' class='market_feed'>
-                <div class='title'>gemini market</div>
+                <div class='title'>gemini</div>
 
                 <div class='market_summary'>
                     <div class='current_price'>

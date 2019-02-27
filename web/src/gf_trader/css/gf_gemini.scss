@@ -7,4 +7,17 @@
 	color:            black;
 	position:         absolute;
 	top:              557px;
+
+	.title {
+		background-color: #00fdff;
+		position: absolute;
+		right:    -130px;
+	}
+
+	.market_summary {
+		background-color: #00fdff;
+		position: absolute;
+		top: 53px;
+		right: -195px;
+	}
 }

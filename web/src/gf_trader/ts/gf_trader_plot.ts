@@ -21,13 +21,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 declare var p5;
 //---------------------------------------------------
-export function init_p5(p_canvas_id_str, p_price_data_lst, p_log_fun) {
+export function init_p5(p_canvas_parent_div_id_str, p_price_data_lst, p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_plot.init_p5()');
         
     const canvas_width_int  = $(window).width() * 0.8; //80% of window width
     const canvas_height_int = 400;
     const price_point_dim_f = 2.0;
     const x_offset_f        = 10;
+
+
+    $(`#${p_canvas_parent_div_id_str}`).css("width", `${canvas_width_int}px`);            //make parent div the same width as canvas
+    $(`#${p_canvas_parent_div_id_str}`).parent().css("width", `${canvas_width_int}px`);   //make parent/parent div the same width/height as canvas
+    $(`#${p_canvas_parent_div_id_str}`).parent().css("height", `${canvas_height_int}px`);
 
     const p5_env = function(p5) {
 
@@ -94,8 +99,7 @@ export function init_p5(p_canvas_id_str, p_price_data_lst, p_log_fun) {
         };
     };
 
-    const plot_containing_div_id_str = p_canvas_id_str; //'market_plot';
-    const custom_p5                  = new p5(p5_env, plot_containing_div_id_str);
+    const custom_p5 = new p5(p5_env, p_canvas_parent_div_id_str);
 }
 //---------------------------------------------------
 function draw_y_axis(p_max_price_f, p_min_price_f, p_canvas_height_int, p_p5) {
