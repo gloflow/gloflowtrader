@@ -9,17 +9,25 @@
     top:      150px;
     height:   200px;
     width:    800px;
-
-    .title {
-        background-color: #ccc239;
-		position: absolute;
-		right:    -148px;
-    }
     
     .market_summary {
+        grid-area:        market_summary; //grid defined in gf_market_feeds.scss
         background-color: #ccc239;
-		position: absolute;
-		top: 53px;
-		right: -195px;
-	}
+		//position:         absolute;
+		//top:              53px;
+        //right:            -195px;
+        
+        .title {
+            background-color: #ccc239;
+            //position:         absolute;
+            //right:            -148px;
+        }
+
+        .data_points {
+        }
+    }
+    
+    #binance_market_plot {
+        grid-area: plot; //grid defined in gf_market_feeds.scss
+    }
 }

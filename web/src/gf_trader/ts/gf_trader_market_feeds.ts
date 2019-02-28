@@ -26,25 +26,28 @@ declare var EventSource;
 export function init(p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_market_feeds.init()');
 
+    //<div class='market_data'>
+
     const container = $(`
         <div>
             <div id='binance_feed' class='market_feed'>
-                <div class='title'>binance</div>
-
                 <div class='market_summary'>
-                    <div class='current_price'>
-                        <span>price - </span><span>$</span><span class='price'>0.0</span>
-                    </div>
-                    
-                    <div class='last_bid_price'>
-                        <span>price bid - </span><span>$</span><span class='price'>0.0</span>
-                    </div>
-                    <div class='last_ask_price'>
-                        <span>price ask - </span><span>$</span><span class='price'>0.0</span>
-                    </div>
+                    <div class='title'>binance</div>
+                    <div class='data_points'>
+                        <div class='current_price'>
+                            <span>price - </span><span>$</span><span class='price'>0.0</span>
+                        </div>
+                        
+                        <div class='last_bid_price'>
+                            <span>price bid - </span><span>$</span><span class='price'>0.0</span>
+                        </div>
+                        <div class='last_ask_price'>
+                            <span>price ask - </span><span>$</span><span class='price'>0.0</span>
+                        </div>
 
-                    <div class='bid_trades_count'><span>bid/buy trades count - </span><span class='count'>0</span></div>
-                    <div class='ask_trades_count'><span>ask/sell trades count - </span><span class='count'>0</span></div>
+                        <div class='bid_trades_count'><span>bid/buy trades count - </span><span class='count'>0</span></div>
+                        <div class='ask_trades_count'><span>ask/sell trades count - </span><span class='count'>0</span></div>
+                    </div>
                 </div>
 
                 <div id='binance_market_plot'>
@@ -54,7 +57,7 @@ export function init(p_log_fun) {
                     </div> -->
                 </div>
 
-                <div class='market_data'>
+                
                     <div class='bid'>
                         <div class='title'>bid/buy</div>
                         <div class='trade__data'></div>
@@ -66,25 +69,26 @@ export function init(p_log_fun) {
                         <div class='trade__data'></div>
                         <div class='place_and_cancel__data'></div>
                     </div>
-                </div>
+ 
             </div>
             <div id='gemini_feed' class='market_feed'>
-                <div class='title'>gemini</div>
-
                 <div class='market_summary'>
-                    <div class='current_price'>
-                        <span>price - </span><span>$</span><span class='price'>0.0</span>
-                    </div>
-                    
-                    <div class='last_bid_price'>
-                        <span>price bid - </span><span>$</span><span class='price'>0.0</span>
-                    </div>
-                    <div class='last_ask_price'>
-                        <span>price ask - </span><span>$</span><span class='price'>0.0</span>
-                    </div>
+                    <div class='title'>gemini</div>
+                    <div class='data_points'>
+                        <div class='current_price'>
+                            <span>price - </span><span>$</span><span class='price'>0.0</span>
+                        </div>
+                        
+                        <div class='last_bid_price'>
+                            <span>price bid - </span><span>$</span><span class='price'>0.0</span>
+                        </div>
+                        <div class='last_ask_price'>
+                            <span>price ask - </span><span>$</span><span class='price'>0.0</span>
+                        </div>
 
-                    <div class='bid_trades_count'><span>bid/buy trades count - </span><span class='count'>0</span></div>
-                    <div class='ask_trades_count'><span>ask/sell trades count - </span><span class='count'>0</span></div>
+                        <div class='bid_trades_count'><span>bid/buy trades count - </span><span class='count'>0</span></div>
+                        <div class='ask_trades_count'><span>ask/sell trades count - </span><span class='count'>0</span></div>
+                    </div>
                 </div>
 
                 <div id='gemini_market_plot'>
@@ -94,7 +98,7 @@ export function init(p_log_fun) {
                     </div> -->
                 </div>
 
-                <div class='market_data'>
+
                     <div class='bid'>
                         <div class='title'>bid/buy</div>
                         <div class='trade__data'></div>
@@ -106,7 +110,7 @@ export function init(p_log_fun) {
                         <div class='trade__data'></div>
                         <div class='place_and_cancel__data'></div>
                     </div>
-                </div>
+           
             </div>
         </div>`);
 
@@ -234,8 +238,8 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
                 `<span style="font-size:10px">$</span>`+
                 price_f+' '+
                 `<span style="font-size:10px">eth</span>`+
-                `<span style="font-size:`+remaining__font_size_int+`px;font-weight:bold;background-color:`+remaining__color_str+`">`+remaining_f+`</span>`+
-                `<span class="`+reason_class_str+`">`+reason_str+`</span>`+
+                `<span style="font-size:${remaining__font_size_int}px;font-weight:bold;background-color:${remaining__color_str}">${remaining_f}</span>`+
+                `<span class="${+reason_class_str}">${reason_str}</span>`+
             `</div>`);
 
         switch (side_str) {
@@ -299,11 +303,9 @@ function update_market_symmary(p_event_data_map, p_market_summary_map, p_log_fun
             case 'bid':
                 $('.market_summary .last_bid_price .price').text(price_f);
 
-
                 $('.market_summary .bid_trades_count .count').text(p_market_summary_map['bid_trades_count_int']+1);
                 p_market_summary_map['bid_trades_count_int'] += 1;
                 p_market_summary_map['last_side_str']         = 'bid';
-
                 break;
 
             case 'ask':
@@ -312,7 +314,6 @@ function update_market_symmary(p_event_data_map, p_market_summary_map, p_log_fun
                 $('.market_summary .ask_trades_count .count').text(p_market_summary_map['ask_trades_count_int']+1);
                 p_market_summary_map['ask_trades_count_int'] += 1;
                 p_market_summary_map['last_side_str']         = 'ask';
-
                 break;
         }
 

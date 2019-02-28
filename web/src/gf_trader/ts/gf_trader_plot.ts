@@ -24,7 +24,7 @@ declare var p5;
 export function init_p5(p_canvas_parent_div_id_str, p_price_data_lst, p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_plot.init_p5()');
         
-    const canvas_width_int  = $(window).width() * 0.8; //80% of window width
+    const canvas_width_int  = 800; //$(window).width() * 0.8; //80% of window width
     const canvas_height_int = 400;
     const price_point_dim_f = 2.0;
     const x_offset_f        = 10;

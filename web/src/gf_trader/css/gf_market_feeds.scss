@@ -4,98 +4,134 @@
 
 .market_feed {
 
-	.title {
-		color:black;
-	}
+	display:               grid; /*body is the grid container*/
+	grid-row-gap:          0px;
+	grid-column-gap:       0px;
+	grid-template-columns: 800px 150px 500px 500px; //300px 300px 300px 300px;
+	grid-template-rows:    50px 400px;
+	grid-template-areas:   //".    .              bid_title       .                         ask_title       ."
+	                       "plot market_summary bid ask"; //bid_trades_feed bid_place_and_cancel_feed ask_trades_feed ask_place_and_cancel_feed";
 	
-	.market_data {
+	/*.market_data {
 		position: absolute;
-		top: 0px;
-		right: 0px;
-		z-index: -1;
-	}
+		top:      0px;
+		right:    0px;
+		z-index:  -1;*/
+		
+		//BID
+		.bid {
+			grid-area: bid;
 
-	//BID
-	.market_data .bid {
-		position: absolute;
-		left:     0px;
-		width:    280px;
-		height:   1000px;
-		background-color: #e6e6e6;
-	
-		.trade__data {
-			position: absolute;
-			width:    390px;
-			height: 400px;
-			background-color: lightgray;
+			display:               grid; /*body is the grid container*/
+			grid-row-gap:          0px;
+			grid-column-gap:       0px;
+			grid-template-columns: 250px 250px;
+			grid-template-rows:    50px 400px;
+			grid-template-areas:   "bid_title       ."
+								   "bid_trades_feed bid_place_and_cancel_feed";
+								
+			//position:  absolute;
+			//left:      0px;
+			//width:     50%; //280px;
+			//height:    400px; //1000px;
+			background-color: #e6e6e6;
+			
+			.title {
+				grid-area: bid_title;
+				//position:  absolute;
+				//right:     0px;
+				font-size: 16px;
+				color:     black;
+			}
+
+			.trade__data {
+				grid-area: bid_trades_feed;
+				//position: absolute;
+				//width:    50%; //390px;
+				//height:   400px;
+				background-color: lightgray;
+			}
+
+			.place_and_cancel__data {
+				grid-area: bid_place_and_cancel_feed;
+				//position: absolute;
+				//left:     390px;
+				//right: 0px;
+
+				//width:    50%; //420px;
+				//height:   400px;
+				background-color: gray;
+			}
+
+			.price .reason {
+				font-size: 14px;
+			}
 		}
+	
+		//ASK
+		.ask {
+			grid-area: ask;
 
-		.place_and_cancel__data {
-			position: absolute;
-			left: 390px;
-			width: 420px;
-			height: 400px;
+			display:               grid; /*body is the grid container*/
+			grid-row-gap:          0px;
+			grid-column-gap:       0px;
+			grid-template-columns: 250px 250px;
+			grid-template-rows:    50px 400px;
+			grid-template-areas:   "ask_title       ."
+			                       "ask_trades_feed ask_place_and_cancel_feed";
+
+
+			//grid-area: ask_feed;
+			//position:  absolute;
+			//left:      280px;
+			//width:     1000px;
+			//height:    400px;
 			background-color: gray;
-		}
+			
+			.title {
+				grid-area: ask_title;
+				//position:  absolute;
+				//right:     0px;
+				font-size: 16px;
+				color:     black;
+			}
 
-		.title {
-			position: absolute;
-			right: 0px;
-			font-size: 16px;
-			color: black;
-		}
+			.trade__data {
+				grid-area: ask_trades_feed;
+				//position:         absolute;
+				//width:            50%; //390px;
+				//height:           400px;
+				background-color: lightgray;
+			}
 
+			.place_and_cancel__data {
+				grid-area: ask_place_and_cancel_feed;
+				//position: absolute;
+				//left:     390px;
+				//right: 0px;
+				//width:    50%; //520px;
+				//height:   400px;
+				background-color: gray;
+			}
+		}
+	
 		.price .reason {
 			font-size: 14px;
-		}
-	}
-	
-	//ASK
-	.market_data .ask {
-		position: absolute;
-		left: 280px;
-		width: 270px;
-		background-color: gray;
-	
-		.trade__data {
-			position: absolute;
-			width:    390px;
-			height: 400px;
-			background-color: lightgray;
-		}
+		
+			.reason__cancel {
+				font-size:        14px;
+				background-color: red;
+			}
 
-		.place_and_cancel__data {
-			position: absolute;
-			left:     390px;
-			width:    420px;
-			height: 400px;
-			background-color: gray;
-		}
+			.reason__place {
+				font-size:        14px;
+				background-color: #5e84da;
+			}
 
-		.title {
-			position: absolute;
-			right: 0px;
-			font-size: 16px;
-			color:     black;
+			.reason__trade {
+				font-size:        14px;
+				background-color: green;
+			}
 		}
-	}
-	
-	.market_data .price .reason {
-		font-size: 14px;
-	
-		.reason__cancel {
-			font-size:        14px;
-			background-color: red;
-		}
-
-		.reason__place {
-			font-size:        14px;
-			background-color: #5e84da;
-		}
-
-		.reason__trade {
-			font-size:        14px;
-			background-color: green;
-		}
-	}
+	//}
 }
