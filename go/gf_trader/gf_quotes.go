@@ -305,7 +305,7 @@ func quote__create(p_symbol_str string,
 	p_price_change_nominal_f float64,
 	p_price_change_percent_f float64,
 	p_runtime                *Runtime) (*Gf_quote, *gf_core.Gf_error) {
-	p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_quotes.quote__create()")
+	//p_runtime.Runtime_sys.Log_fun("FUN_ENTER", "gf_quotes.quote__create()")
 
 	creation_unix_time_f := float64(time.Now().UnixNano())/1000000000.0
 	id_str               := "gf_quote__"+fmt.Sprint(creation_unix_time_f)
@@ -322,7 +322,7 @@ func quote__create(p_symbol_str string,
 		Price_change_percent_f: p_price_change_percent_f,
 	}
 
-	p_runtime.Runtime_sys.Log_fun("INFO", "------- "+p_symbol_str+" - "+fmt.Sprint(gf_quote.Price_f))
+	//p_runtime.Runtime_sys.Log_fun("INFO", "------- "+p_symbol_str+" - "+fmt.Sprint(gf_quote.Price_f))
 
 	//--------------
 	//DB PERSIST

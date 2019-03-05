@@ -63,6 +63,8 @@ export function init_p5(p_canvas_parent_div_id_str, p_price_data_lst, p_log_fun)
 
             var prev_x_f        = null;
             var prev_y_inverted = null;
+            
+            //console.log(p_price_data_lst)
 
             for (var i=0; i < p_price_data_lst.length; i++) {
 
@@ -70,6 +72,7 @@ export function init_p5(p_canvas_parent_div_id_str, p_price_data_lst, p_log_fun)
                 const price_f = p_price_data_lst[i];
                 const x_f     = x_offset_f+i*3;
 
+                
                 //IMPORTANT!! - difference of the current price from the minimum price
                 //              in the price_range_f
                 const price_delta_f = price_f - min_price_f;

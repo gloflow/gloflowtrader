@@ -116,13 +116,14 @@ export function init(p_log_fun) {
 
     $('body').append(container);
     
-    const price_data_lst = [];
+    const binance__price_data_lst = [];
+    const gemini__price_data_lst  = []; 
 
-    gf_trader_plot.init_p5('binance_market_plot', price_data_lst, p_log_fun);
-    gf_trader_plot.init_p5('gemini_market_plot', price_data_lst, p_log_fun);
+    gf_trader_plot.init_p5('binance_market_plot', binance__price_data_lst, p_log_fun);
+    gf_trader_plot.init_p5('gemini_market_plot', gemini__price_data_lst, p_log_fun);
 
-    init_updates("trader_binance_events", price_data_lst, container, p_log_fun);
-    init_updates("trader_gemini_events", price_data_lst, container, p_log_fun);
+    init_updates("trader_binance_events", binance__price_data_lst, $(container).find(`#binance_feed`), p_log_fun);
+    init_updates("trader_gemini_events", gemini__price_data_lst, $(container).find(`#gemini_feed`), p_log_fun);
 
     return container;
 }
@@ -130,12 +131,12 @@ export function init(p_log_fun) {
 export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_market_feeds.init_updates()');
 
-    console.log("REGISTER GEMINI EVENT_SOURCE");
-    //const events_id_str = "trader_gemini_events";
+    const initial_price_f               = 130.0;   //initial price that the plot will start at
+    const max_num_of_prices_to_show_int = 100;
+
+    console.log("REGISTER MARKET_FEED EVENT_SOURCE");
     const event_source  = new EventSource("/trader/events?events_id="+p_events_id_str)
 
-    const initial_price_f = 130.0;   //initial price that the plot will start at
-    
     var   i = 0;
     const market_summary_map = {
         'last_price_f':         initial_price_f,
@@ -145,8 +146,10 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
     };
     
     //const seconds_samples_num_int = 60*6; //number of seconds-resolution price datapoints
-    p_price_data_lst.push(initial_price_f);
+    //p_price_data_lst.push(initial_price_f);
 
+    //IMPORTANT!! - this loop is happening on a regular interval, as oppose to event_source.onmessage
+    //              which is irregular and depends on when the data comes from the server.
     setInterval(()=>{
 
         //IMPORTANT!! - if there is a certain number of prices
@@ -156,14 +159,15 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
             p_price_data_lst.shift();
         }
 
-        p_price_data_lst.push(market_summary_map['last_price_f']);
+        const last_price_f = market_summary_map['last_price_f'];
+        p_price_data_lst.push(last_price_f);
 
     }, 2000);
 
     event_source.onmessage = (p_e)=>{
 
         const event_data_map = JSON.parse(p_e.data);  
-        console.log(event_data_map)
+        //console.log(event_data_map)
             
         const meta_map   = event_data_map['meta_map'];
         const symbol_str = meta_map['e__symbol_str'];
@@ -185,15 +189,28 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
     const ask__place_and_cancel_element = $(p_container).find('.ask .place_and_cancel__data');
 
     //---------------------------------------------------
+    function init_visibility_onmouseover(p_element) {
+        $(p_element).on('mouseover', ()=>{$(p_element).css({'overflow':'visible', 'z-index':1})});
+        $(p_element).on('mouseout', ()=>{$(p_element).css({'overflow': 'hidden', 'z-index':0})});
+    }
+    //---------------------------------------------------
+    init_visibility_onmouseover(bid__trade_element);
+    init_visibility_onmouseover(bid__place_and_cancel_element);
+    init_visibility_onmouseover(ask__trade_element);
+    init_visibility_onmouseover(ask__place_and_cancel_element);
+
+
+    //---------------------------------------------------
     function view__update(p_event_data_map, p_market_summary_map) {
 
-    	const meta_map    = p_event_data_map['meta_map'];
-        const symbol_str  = meta_map['e__symbol_str'];
-    	const price_f     = meta_map['e__price_f'];
-        const side_str    = meta_map['e__side_str'];
-        const remaining_f = meta_map['e__remaining_f'];
+    	const meta_map        = p_event_data_map['meta_map'];
+        const symbol_str      = meta_map['e__symbol_str'];
+        const price_f         = meta_map['e__price_f'];
+        const price_rounded_f = Math.round(price_f * 1000) / 1000; 
+        const side_str        = meta_map['e__side_str'];
+        const remaining_f     = meta_map['e__remaining_f'];
 
-        console.log(' ----------     '+symbol_str)
+        //console.log(' ----------     '+symbol_str)
 
         //-----------
         //REASON
@@ -234,35 +251,44 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
         }
 
         const element = $(
-            `<div class="price">`+
-                `<span style="font-size:10px">$</span>`+
-                price_f+' '+
-                `<span style="font-size:10px">eth</span>`+
+            `<div class="price" id="${i}">`+
+                `<span class="${reason_class_str}">${reason_str}</span>`+    
+                `<span style="font-size:12px">$</span>${price_rounded_f}<span style="font-size:10px">eth</span>`+
                 `<span style="font-size:${remaining__font_size_int}px;font-weight:bold;background-color:${remaining__color_str}">${remaining_f}</span>`+
-                `<span class="${+reason_class_str}">${reason_str}</span>`+
             `</div>`);
-
+        //---------------------------------------------------
+        function remove_last_price_if_too_many(p_container) {
+            const prices_num_int = $(p_container).find(`.price`).length;
+            if (prices_num_int > max_num_of_prices_to_show_int) {
+                $($(p_container).find(`.price`)[prices_num_int-1]).remove()
+            }
+        }
+        //---------------------------------------------------
         switch (side_str) {
             case 'bid':
                 if (reason_str == 'trade') {
                     $(bid__trade_element).prepend(element);
+                    remove_last_price_if_too_many(bid__trade_element);
                 }
                 else if (reason_str == 'place' || reason_str == 'cancel') {
                     $(bid__place_and_cancel_element).prepend(element);
+                    remove_last_price_if_too_many(bid__place_and_cancel_element);
                 }
                 break;
 
             case 'ask':
                 if (reason_str == 'trade') {
                     $(ask__trade_element).prepend(element);
+                    remove_last_price_if_too_many(ask__trade_element);
                 }
                 else if (reason_str == 'place' || reason_str == 'cancel') {
                     $(ask__place_and_cancel_element).prepend(element);
+                    remove_last_price_if_too_many(ask__place_and_cancel_element);
                 }
                 break;
         }
 
-        return price_f;
+        return price_rounded_f;
     }
     //---------------------------------------------------
 
@@ -295,6 +321,9 @@ function update_market_symmary(p_event_data_map, p_market_summary_map, p_log_fun
     }
 
     const reason_str = meta_map['e__reason_str'];
+
+
+    
     if (reason_str == 'trade') {
 
         $('.market_summary .current_price .price').text(price_f);
@@ -317,6 +346,8 @@ function update_market_symmary(p_event_data_map, p_market_summary_map, p_log_fun
                 break;
         }
 
+        //IMPORTANT!! - record onlyt trade prices, not order place/cancel prices
+        console.log(price_f);
         p_market_summary_map['last_price_f'] = price_f;
     }
 }
