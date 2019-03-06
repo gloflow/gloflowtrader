@@ -134,10 +134,11 @@ func binance__parse_message(p_symbol_str string,
 	}
 
 	parsed_event := &gf_market_data_parsed_event{
-		events_id_str: events_id_str,
-		type_str:      event_type_str,
-		msg_str:       event_msg_str,
-		data_map:      event_data_map, 
+		events_id_str:   events_id_str,
+		type_str:        event_type_str,
+		remote_type_str: "trade",
+		msg_str:         event_msg_str,
+		data_map:        event_data_map, 
 	}
 
 	return parsed_event

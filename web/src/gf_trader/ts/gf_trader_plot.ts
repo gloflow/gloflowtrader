@@ -21,14 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 declare var p5;
 //---------------------------------------------------
-export function init_p5(p_canvas_parent_div_id_str, p_price_data_lst, p_log_fun) {
+export function init_p5(p_canvas_parent_div_id_str, p_price_data_lst, p_config_map, p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_plot.init_p5()');
         
-    const canvas_width_int  = 800; //$(window).width() * 0.8; //80% of window width
-    const canvas_height_int = 400;
-    const price_point_dim_f = 2.0;
-    const x_offset_f        = 10;
-
+    const canvas_width_int  = p_config_map['plot__canvas_width_int'];  //800; //$(window).width() * 0.8; //80% of window width
+    const canvas_height_int = p_config_map['plot__canvas_height_int']; //400;
+    const price_point_dim_f = p_config_map['plot__price_point_dim_f']; //2.0;
+    const x_offset_pixels_f = p_config_map['plot__x_offset_pixels_f']; //10;
+    const x_delta_pixels_f  = p_config_map['plot__x_delta_pixels_f'];
 
     $(`#${p_canvas_parent_div_id_str}`).css("width", `${canvas_width_int}px`);            //make parent div the same width as canvas
     $(`#${p_canvas_parent_div_id_str}`).parent().css("width", `${canvas_width_int}px`);   //make parent/parent div the same width/height as canvas
@@ -70,7 +70,7 @@ export function init_p5(p_canvas_parent_div_id_str, p_price_data_lst, p_log_fun)
 
                 //-------------------
                 const price_f = p_price_data_lst[i];
-                const x_f     = x_offset_f+i*3;
+                const x_f     = x_offset_pixels_f + i * x_delta_pixels_f;
 
                 
                 //IMPORTANT!! - difference of the current price from the minimum price

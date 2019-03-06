@@ -226,7 +226,7 @@ func gemini__parse_message(p_symbol_str string,
 
 			}
 
-			event_data_map["e__reason_str"] = e__reason_str //DEPRECATED!! - is this used?
+			event_data_map["e__reason_str"] = e__reason_str;
 		}
 
 		//"bid"|"ask"

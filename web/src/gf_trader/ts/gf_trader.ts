@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ///<reference path="./../../d/jquery.d.ts" />
 
+import * as gf_config              from "./gf_config";
 import * as gf_trader_watchlist    from "./gf_trader_watchlist";
 import * as gf_trader_market_feeds from "./gf_trader_market_feeds";
 import * as gf_trader_transactions from "./gf_trader_transactions";
@@ -46,6 +47,9 @@ $(document).ready(()=>{
 //---------------------------------------------------
 export function init(p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader.init()');
+
+
+    const config_map = gf_config.get();
 
     var stocks__open_bool = false;
     var crypto__open_bool = false;
@@ -84,7 +88,7 @@ export function init(p_log_fun) {
                 stocks__open_bool = false;
             }
 
-            crypto_container = gf_trader_market_feeds.init(p_log_fun);
+            crypto_container = gf_trader_market_feeds.init(config_map, p_log_fun);
 
             /*//<canvas> needs to be reinitialize on window screen resizing, to be reactive.
             $(window).resize(()=>{

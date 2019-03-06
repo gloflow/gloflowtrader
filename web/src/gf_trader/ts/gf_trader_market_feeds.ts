@@ -23,7 +23,7 @@ import * as gf_trader_plot from "./gf_trader_plot";
 
 declare var EventSource;
 //---------------------------------------------------
-export function init(p_log_fun) {
+export function init(p_config_map, p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_market_feeds.init()');
 
     //<div class='market_data'>
@@ -119,27 +119,28 @@ export function init(p_log_fun) {
     const binance__price_data_lst = [];
     const gemini__price_data_lst  = []; 
 
-    gf_trader_plot.init_p5('binance_market_plot', binance__price_data_lst, p_log_fun);
-    gf_trader_plot.init_p5('gemini_market_plot', gemini__price_data_lst, p_log_fun);
+    gf_trader_plot.init_p5('binance_market_plot', binance__price_data_lst, p_config_map, p_log_fun);
+    gf_trader_plot.init_p5('gemini_market_plot', gemini__price_data_lst, p_config_map, p_log_fun);
 
-    init_updates("trader_binance_events", binance__price_data_lst, $(container).find(`#binance_feed`), p_log_fun);
-    init_updates("trader_gemini_events", gemini__price_data_lst, $(container).find(`#gemini_feed`), p_log_fun);
+    init_updates("trader_binance_events", binance__price_data_lst, $(container).find(`#binance_feed`), p_config_map, p_log_fun);
+    init_updates("trader_gemini_events", gemini__price_data_lst, $(container).find(`#gemini_feed`), p_config_map, p_log_fun);
 
     return container;
 }
 //---------------------------------------------------
-export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_log_fun) {
+export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_config_map, p_log_fun) {
     p_log_fun('FUN_ENTER', 'gf_trader_market_feeds.init_updates()');
 
-    const initial_price_f               = 130.0;   //initial price that the plot will start at
-    const max_num_of_prices_to_show_int = 100;
+    //const initial_price_f               = 130.0;   //initial price that the plot will start at
+    //const max_num_of_prices_to_show_int = 100;
+    //const max_num_of_prices_to_plot_int = 10;
 
     console.log("REGISTER MARKET_FEED EVENT_SOURCE");
     const event_source  = new EventSource("/trader/events?events_id="+p_events_id_str)
 
     var   i = 0;
     const market_summary_map = {
-        'last_price_f':         initial_price_f,
+        'last_price_f':         p_config_map['initial_price_f'], //initial_price_f,
         'last_side_str':        'bid', //'bid'|'ask'
         'bid_trades_count_int': 0,
         'ask_trades_count_int': 0
@@ -155,7 +156,7 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
         //IMPORTANT!! - if there is a certain number of prices
         //              remove the first price in order to stay in the range and be able
         //              to display new prices
-        if (p_price_data_lst.length >= 500) {
+        if (p_price_data_lst.length >= p_config_map['max_num_of_prices_to_plot_int']) { //max_num_of_prices_to_plot_int) {
             p_price_data_lst.shift();
         }
 
@@ -172,9 +173,11 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
         const meta_map   = event_data_map['meta_map'];
         const symbol_str = meta_map['e__symbol_str'];
 
-        if (symbol_str != "ETHUSD") {
+        console.log(p_events_id_str+" - "+symbol_str)
+
+        /*if (symbol_str != "ETHUSD") {
             return
-        }
+        }*/
 
         view__update(event_data_map, market_summary_map);
 
@@ -259,7 +262,7 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
         //---------------------------------------------------
         function remove_last_price_if_too_many(p_container) {
             const prices_num_int = $(p_container).find(`.price`).length;
-            if (prices_num_int > max_num_of_prices_to_show_int) {
+            if (prices_num_int > p_config_map['max_num_of_prices_to_show_int']) { //max_num_of_prices_to_show_int) {
                 $($(p_container).find(`.price`)[prices_num_int-1]).remove()
             }
         }
@@ -311,18 +314,14 @@ export function init_updates(p_events_id_str, p_price_data_lst, p_container, p_l
 //---------------------------------------------------
 function update_market_symmary(p_event_data_map, p_market_summary_map, p_log_fun) {
 
-    const meta_map    = p_event_data_map['meta_map'];
-    const symbol_str  = meta_map['e__symbol_str'];
-    const price_f     = meta_map['e__price_f'];
-    const side_str    = meta_map['e__side_str'];
-
-    if (symbol_str != "ETHUSD") {
-        return
-    }
-
+    const meta_map   = p_event_data_map['meta_map'];
+    const symbol_str = meta_map['e__symbol_str'];
+    const price_f    = meta_map['e__price_f'];
+    const side_str   = meta_map['e__side_str'];
     const reason_str = meta_map['e__reason_str'];
 
 
+    console.log(p_event_data_map)
     
     if (reason_str == 'trade') {
 
